@@ -1,0 +1,29 @@
+{
+  "apiVersion": "1",
+  "titel": "KI-Analyse App",
+  "seitentitel": "KI-Analyse",
+  "icon": "logo_ondics.png",
+  "brandingCSS": "",
+  "beschreibung": ["Die App ist zur KI-Analyse welche Datensätze analysiert."],
+  "kontakt": [
+    "Tel.: <a href='tel:+49711310093100'>0711-31009-3100</a><br>",
+    "Fax: <a href='tel:+49711310093108'>0711-31009-3108</a><br>",
+    "E-Mail: <a href='mailto:info@ondics.de'>info@ondics.de</a>"
+  ],
+  "impressum": [
+    "Ondics GmbH<br>",
+    "Wolfgang Clauss<br>Blumenstrasse 19<br>",
+    "<a href='https://www.ondics.de/' target='_blank'>https://www.ondics.de/</a>"
+  ],
+  "datenschutz": "umfangreicher Text...",
+  "urlODP": "https://open-data-musterstadt.ckan.de",
+  "urlDaten": "https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024",
+  "fusszeile": [
+    "(C) Copyright 2025 | ",
+    "für den Inhalt: Ondics GmbH | ",
+    "App-Entwickler: Ondics GmbH | ",
+    "Provided by: Ondics GmbH"
+  ],
+  "apiurl": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024",
+  "sprache": "de"
+}

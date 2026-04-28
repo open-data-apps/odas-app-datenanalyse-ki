@@ -1,0 +1,238 @@
+/* Styling für die erweiterte KI-Analyse App */
+
+.function-selection-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.function-selection-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Minimiertes Menü */
+.function-selection-card .function-buttons {
+  transition: all 0.3s ease;
+}
+
+.function-selection-card .card-text {
+  transition: all 0.3s ease;
+}
+
+.back-button {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.back-to-menu {
+  animation: fadeInDown 0.3s ease-out;
+  text-align: left;
+}
+
+.back-to-menu .btn {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: #6c757d;
+}
+
+.back-to-menu .btn:hover {
+  background-color: #6c757d;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.card-title {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.comparison-section {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+}
+
+.dataset-input-group {
+  background: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dataset-info {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 15px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 20px;
+}
+
+.dataset-info h6 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.search-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.search-section .form-label {
+  color: white;
+  font-weight: 500;
+}
+
+.search-section .form-control,
+.search-section .form-select {
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  margin: 2rem auto;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.result-card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.result-card .card-body {
+  padding: 2rem;
+}
+
+.analysis-result h1,
+.analysis-result h2,
+.analysis-result h3 {
+  color: #2c3e50;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.analysis-result ul,
+.analysis-result ol {
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.analysis-result li {
+  margin-bottom: 0.5rem;
+}
+
+.btn-group-toggle .btn {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-loading {
+  background-color: #ffc107;
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+.status-success {
+  background-color: #28a745;
+}
+
+.status-error {
+  background-color: #dc3545;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  color: #007bff;
+}
+
+.ai-credit {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 10px 15px;
+  margin-top: 15px;
+  border-radius: 0 4px 4px 0;
+}
+
+.function-buttons .btn {
+  min-height: 60px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.function-buttons .btn i {
+  font-size: 1.3rem;
+}
