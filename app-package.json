@@ -15,10 +15,22 @@
     "Der Datensatz muss mit der package_show API Funktion mitgegeben werden.",
     "Beispiel: https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024"
   ],
-  "tags-funktion": ["Datenanalyse", "Dokumentenanalyse"],
-  "tags-dateityp": ["pdf", "xls", "csv", "txt"],
-  "tags-datenart": ["App-Spezifikation"],
-  "screenshots": ["assets/Desktop_Screenshot.png"],
+  "tags-funktion": [
+    "Datenanalyse",
+    "Dokumentenanalyse"
+  ],
+  "tags-dateityp": [
+    "pdf",
+    "xls",
+    "csv",
+    "txt"
+  ],
+  "tags-datenart": [
+    "App-Spezifikation"
+  ],
+  "screenshots": [
+    "assets/Desktop_Screenshot.png"
+  ],
   "branding-css": "",
   "api-version": "1",
   "instanz-config": {
@@ -147,7 +159,10 @@
       "format": {
         "typ": "markdown"
       },
-      "default": ["_multiline_", "Alle Daten sind geschützt."],
+      "default": [
+        "_multiline_",
+        "Alle Daten sind geschützt."
+      ],
       "erforderlich": "ja"
     },
     "urlDaten": {
@@ -186,10 +201,18 @@
       "hilfe": "Angabe der App-Sprache",
       "format": {
         "typ": "dropdown",
-        "optionen": ["de"],
+        "optionen": [
+          "de"
+        ],
         "default": "de"
       },
       "erforderlich": "ja"
     }
+  },
+  "daten": {
+    "beschreibung": "Die KI-Analyse-App verarbeitet konfigurierbare Open-Data-Ressourcen aus dem Open Data Portal (z.B. JSON- oder CSV-Endpunkte).",
+    "schema": "",
+    "beispiel": "",
+    "beispiel-url": ""
   }
 }
