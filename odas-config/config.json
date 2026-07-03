@@ -4,7 +4,22 @@
   "seitentitel": "KI-Analyse",
   "icon": "logo_ondics.png",
   "brandingCSS": "",
-  "beschreibung": ["Die App ist zur KI-Analyse welche Datensätze analysiert."],
+  "beschreibung": [
+    "Die KI-Analyse-App analysiert offene Datensätze mit künstlicher Intelligenz (Google Gemini).",
+    "Nutzer:innen wählen eine Ressource aus und erhalten eine verständliche Analyse – ohne Programmierkenntnisse.",
+    "## Für wen ist diese App?",
+    "Diese App analysiert offene Datensätze mit KI. Sie richtet sich an Datenanalyst:innen, Forscher:innen und neugierige Bürger:innen ohne Programmierkenntnisse.",
+    "## App-Anbieter",
+    "Die App wird bereit gestellt von <a href=\"https://www.ondics.de\">Ondics GmbH</a>",
+    "## Datenquelle",
+    "- **Open Data Portal:** <a href=\"https://open-data-musterstadt.ckan.de\" target=\"_blank\">CKAN Portal</a>",
+    "- **Datensatz:** <a href=\"https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024\" target=\"_blank\">Muellkalender 2024</a>",
+    "- **Ressource:** <a href=\"https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024\" target=\"_blank\">CKAN package_show API</a>",
+    "## Über diese App",
+    "Die App wurde entwickelt von Ondics GmbH. App-Version: 1.1.0.",
+    "## Open Data App Store",
+    "Der Open Data App Store betrieben von <a href=\"https://open-data-app-store.de\">ODAS</a>"
+  ],
   "kontakt": [
     "Tel.: <a href='tel:+49711310093100'>0711-31009-3100</a><br>",
     "Fax: <a href='tel:+49711310093108'>0711-31009-3108</a><br>",
@@ -25,5 +40,8 @@
     "Provided by: Ondics GmbH"
   ],
   "apiurl": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024",
-  "sprache": "de"
+  "sprache": "de",
+  "weiterfuehrendeLinks": "<ul><li><a href=\"https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024\" target=\"_blank\">CKAN-Datensatz</a></li><li><a href=\"https://deepmind.google/technologies/gemini/\" target=\"_blank\">Google Gemini Dokumentation</a></li><li><a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google Datenschutzerklärung</a></li></ul>",
+  "datenStand": "",
+  "datenquelleHinweis": "Diese App sendet den ausgewählten Datensatz an Google Gemini zur KI-gestützten Analyse. Die Analyse dauert je nach Dateigröße 30–60 Sekunden. Ergebnisse sind KI-generiert und können Fehler enthalten. Der vollständige Prompt lautet: 'Analysiere den folgenden Datensatz...' Die Daten werden verschlüsselt übertragen und nicht dauerhaft gespeichert."
 }

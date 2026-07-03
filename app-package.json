@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Diese App bringt Künstliche Intelligenz ins Open Data Portal! Mit wenigen Klicks können Datensätze automatisch analysiert werden.",
@@ -109,12 +109,16 @@
       },
       "default": [
         "_multiline_",
-        "Die KI-Analyse-App zeigt jeweils eine KI-Analyse für die ausgewählte Ressource an.",
+        "Die KI-Analyse-App analysiert offene Datensätze mit künstlicher Intelligenz (Google Gemini).",
+        "Nutzer:innen wählen eine Ressource aus und erhalten eine verständliche Analyse – ohne Programmierkenntnisse.",
+        "## Für wen ist diese App?",
+        "Diese App analysiert offene Datensätze mit KI. Sie richtet sich an Datenanalyst:innen, Forscher:innen und neugierige Bürger:innen ohne Programmierkenntnisse.",
         "## App-Anbieter",
         "Die App wird bereit gestellt von <a href=\"{{odp.anbieter.url}}\">{{odp.anbieter.name}}</a>",
         "## Datenquelle",
-        "Die Daten kommen aus  unserem Open Data Portal <a href=\"{{odp.url}}\">{{odp.name}}</a>",
-        "Die Datenquelle ist in unserem Open Data Portal <a href=\"{{appinstanz.apiurl}}\">{{appinstanz.apiurl}}</a>.",
+        "- **Open Data Portal:** <a href=\"{{odp.url}}\">{{odp.name}}</a>",
+        "- **Datensatz:** <a href=\"{{appinstanz.urlDaten}}\" target=\"_blank\">KI-Analyse-Datensatz</a>",
+        "- **Ressource:** <a href=\"{{appinstanz.apiurl}}\" target=\"_blank\">CKAN package_show API</a>",
         "## Über diese App",
         "Die App wurde entwickelt von <a href=\"{{app.developer.url}}\">{{app.developer.name}}</a>. App-Version: {{app.version}}.",
         "## Open Data App Store",
@@ -164,6 +168,27 @@
         "Alle Daten sind geschützt."
       ],
       "erforderlich": "ja"
+    },
+    "datenStand": {
+      "label": "Datenstand",
+      "hilfe": "Freitext-Datum, z.B. 'Stand: Januar 2025'. Leer = ausgeblendet.",
+      "format": { "typ": "string", "laenge": 60 },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "datenquelleHinweis": {
+      "label": "Methodik / Datenquelle-Hinweis",
+      "hilfe": "Herkunft, Erhebungsmethode, Limitierungen (Markdown/HTML). Leer = ausgeblendet.",
+      "format": { "typ": "markdown" },
+      "default": "Diese App sendet den ausgewählten Datensatz an Google Gemini zur KI-gestützten Analyse. Die Analyse dauert je nach Dateigröße 30–60 Sekunden. Ergebnisse sind KI-generiert und können Fehler enthalten. Der vollständige Prompt lautet: 'Analysiere den folgenden Datensatz...' Die Daten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.",
+      "erforderlich": "nein"
+    },
+    "weiterfuehrendeLinks": {
+      "label": "Weiterführende Links",
+      "hilfe": "Verwandte Datensätze / Hintergrundquellen (Markdown/HTML). Leer = ausgeblendet.",
+      "format": { "typ": "markdown" },
+      "default": "<ul><li><a href=\"https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024\" target=\"_blank\">CKAN-Datensatz</a></li><li><a href=\"https://deepmind.google/technologies/gemini/\" target=\"_blank\">Google Gemini Dokumentation</a></li><li><a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google Datenschutzerklärung</a></li></ul>",
+      "erforderlich": "nein"
     },
     "urlDaten": {
       "label": "URL zum Datensatz im ODP",

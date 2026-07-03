@@ -1,3 +1,50 @@
+let dakiDatenStand = null;
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderWeitereInfos(configdata) {
+  const links = String(configdata.weiterfuehrendeLinks || "").trim();
+  if (!links) return "";
+  return (
+    '<section class="daki-weitere-infos mt-4">' +
+    '<h2 class="h5 mb-3">Weitere Informationen</h2>' +
+    '<div class="daki-weitere-infos-content">' +
+    links +
+    "</div></section>"
+  );
+}
+
+function renderMethodikbox(configdata) {
+  const hinweis = String(configdata.datenquelleHinweis || "").trim();
+  const stand = String(configdata.datenStand || "").trim();
+  if (!hinweis && !stand) return "";
+  const standHtml = stand
+    ? '<p class="text-muted small mb-2">' + escapeHtml(stand) + "</p>"
+    : "";
+  return (
+    '<section class="daki-methodik mt-3">' +
+    '<button class="daki-methodik-toggle collapsed" type="button" ' +
+    'data-bs-toggle="collapse" data-bs-target="#daki-methodik-body" ' +
+    'aria-expanded="false" aria-controls="daki-methodik-body">' +
+    '<h2 class="h5 mb-0">Methodik &amp; Datenquelle</h2>' +
+    '<span class="daki-methodik-chevron" aria-hidden="true">&#9662;</span>' +
+    "</button>" +
+    '<div id="daki-methodik-body" class="collapse">' +
+    '<div class="daki-methodik-content">' +
+    standHtml +
+    hinweis +
+    "</div></div></section>"
+  );
+}
+
 async function app(configdata, enclosingHtmlDivElement) {
   const cfg = await Promise.resolve(configdata);
   enclosingHtmlDivElement.innerHTML = "";
@@ -76,6 +123,22 @@ function showFunctionSelectionMenu(container, cfg) {
   const contentContainer = document.createElement("div");
   contentContainer.id = "function-content";
   container.appendChild(contentContainer);
+
+  // Methodikbox
+  const methodikHtml = renderMethodikbox(cfg);
+  if (methodikHtml) {
+    const methodikDiv = document.createElement("div");
+    methodikDiv.innerHTML = methodikHtml;
+    container.appendChild(methodikDiv);
+  }
+
+  // Weitere Informationen
+  const weitereHtml = renderWeitereInfos(cfg);
+  if (weitereHtml) {
+    const weitereDiv = document.createElement("div");
+    weitereDiv.innerHTML = weitereHtml;
+    container.appendChild(weitereDiv);
+  }
 
   // Event-Listener für die Buttons
   document
@@ -206,8 +269,8 @@ async function loadGeneralAnalysisContent(container, cfg) {
     // Nur noch CKAN Support
     if (json.result) {
       pkg = json.result;
-      // Sicherstellen, dass pkg.resources ein Array ist
       pkg.resources = Array.isArray(pkg.resources) ? pkg.resources : [];
+      dakiDatenStand = pkg.metadata_modified || null;
     } else {
       throw new Error("Unbekanntes API-Format");
     }
@@ -237,7 +300,17 @@ async function loadGeneralAnalysisContent(container, cfg) {
         cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
       }</p>
     </div>
+    <div id="daki-datenstand-wrap"></div>
   `;
+
+  // Schale 4: Datenfrische anzeigen
+  if (dakiDatenStand) {
+    const d = new Date(dakiDatenStand);
+    if (!isNaN(d.getTime())) {
+      const dsEl = container.querySelector("#daki-datenstand-wrap");
+      if (dsEl) dsEl.innerHTML = '<div class="text-muted small mb-2">Datenstand: ' + escapeHtml(d.toLocaleDateString("de-DE")) + '</div>';
+    }
+  }
 
   // Ressourcen-Auswahl
   if (
@@ -709,8 +782,8 @@ async function loadSearchAnalysisContent(container, cfg) {
     // Nur noch CKAN Support
     if (json.result) {
       pkg = json.result;
-      // Sicherstellen, dass pkg.resources ein Array ist
       pkg.resources = Array.isArray(pkg.resources) ? pkg.resources : [];
+      dakiDatenStand = pkg.metadata_modified || null;
     } else {
       throw new Error("Unbekanntes API-Format");
     }
