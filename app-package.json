@@ -9,11 +9,19 @@
   "kurzbeschreibung": "Diese App bringt Künstliche Intelligenz ins Open Data Portal! Mit wenigen Klicks können Datensätze automatisch analysiert werden.",
   "beschreibung": [
     "_multiline_",
-    "Die Open Data App analysiert Datensätze mit der Google Gemini KI.",
-    "Diese Analyse wird dann angezeigt. ",
-    "Die Daten werden aus einem Open Data Portal bezogen. ",
-    "Der Datensatz muss mit der package_show API Funktion mitgegeben werden.",
-    "Beispiel: https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024"
+    "<p>Die KI-Analyse-App unterstützt dabei, offene Datensätze verständlich auszuwerten.</p>",
+    "<p>Nutzer:innen wählen eine Ressource aus und erhalten eine KI-gestützte Analyse der verfügbaren Datenstruktur und Inhalte.</p>",
+    "<h3>Inhalte</h3>",
+    "<p>Die App lädt Metadaten und Ressourceninformationen eines konfigurierten Datensatzes und übergibt ausgewählte Inhalte an Google Gemini zur Analyse. Die Ausgabe soll Orientierung geben und Auffälligkeiten, Spalten und mögliche Fragestellungen verständlicher machen.</p>",
+    "<h3>Nutzung</h3>",
+    "<p>Wählen Sie eine Ressource, starten Sie die Analyse und prüfen Sie die Ergebnisse als unterstützende Zusammenfassung. KI-Ausgaben können Fehler enthalten und sollten bei fachlichen Entscheidungen mit der Originalquelle abgeglichen werden.</p>",
+    "<h3>Für wen ist diese App?</h3>",
+    "<p>Die App richtet sich an Bürger:innen, Verwaltungen, Datenredaktionen und Fachstellen, die offene Datensätze schneller verstehen möchten. Besondere Programmierkenntnisse sind für die Nutzung nicht erforderlich.</p>",
+    "<h3>Datenquelle</h3>",
+    "<p>Die analysierten Daten stammen aus dem konfigurierten Open-Data-Datensatz.</p>",
+    "<ul><li><strong>Open Data Portal:</strong> <a href=\"https://open-data-musterstadt.ckan.de\" target=\"_blank\" rel=\"noopener\">Open Data Musterstadt</a></li><li><strong>Datensatz:</strong> <a href=\"https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen/resource/39627e03-611f-4ab6-9af2-e83ab5121b36\" target=\"_blank\" rel=\"noopener\">Konfigurierter Beispieldatensatz</a></li><li><strong>Ressource/API-Endpunkt:</strong> <a href=\"https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen\" target=\"_blank\" rel=\"noopener\">CKAN package_show API</a></li></ul>",
+    "<h3>Open Data App Store</h3>",
+    "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit unterschiedlichen CKAN-Datensätzen konfiguriert werden.</p>"
   ],
   "tags-funktion": [
     "Datenanalyse",
@@ -109,20 +117,19 @@
       },
       "default": [
         "_multiline_",
-        "Die KI-Analyse-App analysiert offene Datensätze mit künstlicher Intelligenz (Google Gemini).",
-        "Nutzer:innen wählen eine Ressource aus und erhalten eine verständliche Analyse – ohne Programmierkenntnisse.",
-        "## Für wen ist diese App?",
-        "Diese App analysiert offene Datensätze mit KI. Sie richtet sich an Datenanalyst:innen, Forscher:innen und neugierige Bürger:innen ohne Programmierkenntnisse.",
-        "## App-Anbieter",
-        "Die App wird bereit gestellt von <a href=\"{{odp.anbieter.url}}\">{{odp.anbieter.name}}</a>",
-        "## Datenquelle",
-        "- **Open Data Portal:** <a href=\"{{odp.url}}\">{{odp.name}}</a>",
-        "- **Datensatz:** <a href=\"{{appinstanz.urlDaten}}\" target=\"_blank\">KI-Analyse-Datensatz</a>",
-        "- **Ressource:** <a href=\"{{appinstanz.apiurl}}\" target=\"_blank\">CKAN package_show API</a>",
-        "## Über diese App",
-        "Die App wurde entwickelt von <a href=\"{{app.developer.url}}\">{{app.developer.name}}</a>. App-Version: {{app.version}}.",
-        "## Open Data App Store",
-        "Der Open Data App Store betrieben von <a href=\"{{odas.betreiber.url}}\">{{odas.betreiber.name}}</a>"
+        "<p>Die KI-Analyse-App unterstützt dabei, offene Datensätze verständlich auszuwerten.</p>",
+        "<p>Nutzer:innen wählen eine Ressource aus und erhalten eine KI-gestützte Analyse der verfügbaren Datenstruktur und Inhalte.</p>",
+        "<h3>Inhalte</h3>",
+        "<p>Die App lädt Metadaten und Ressourceninformationen eines konfigurierten Datensatzes und übergibt ausgewählte Inhalte an Google Gemini zur Analyse. Die Ausgabe soll Orientierung geben und Auffälligkeiten, Spalten und mögliche Fragestellungen verständlicher machen.</p>",
+        "<h3>Nutzung</h3>",
+        "<p>Wählen Sie eine Ressource, starten Sie die Analyse und prüfen Sie die Ergebnisse als unterstützende Zusammenfassung. KI-Ausgaben können Fehler enthalten und sollten bei fachlichen Entscheidungen mit der Originalquelle abgeglichen werden.</p>",
+        "<h3>Für wen ist diese App?</h3>",
+        "<p>Die App richtet sich an Bürger:innen, Verwaltungen, Datenredaktionen und Fachstellen, die offene Datensätze schneller verstehen möchten. Besondere Programmierkenntnisse sind für die Nutzung nicht erforderlich.</p>",
+        "<h3>Datenquelle</h3>",
+        "<p>Die analysierten Daten stammen aus dem konfigurierten Open-Data-Datensatz.</p>",
+        "<ul><li><strong>Open Data Portal:</strong> <a href=\"https://open-data-musterstadt.ckan.de\" target=\"_blank\" rel=\"noopener\">Open Data Musterstadt</a></li><li><strong>Datensatz:</strong> <a href=\"https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen/resource/39627e03-611f-4ab6-9af2-e83ab5121b36\" target=\"_blank\" rel=\"noopener\">Konfigurierter Beispieldatensatz</a></li><li><strong>Ressource/API-Endpunkt:</strong> <a href=\"https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen\" target=\"_blank\" rel=\"noopener\">CKAN package_show API</a></li></ul>",
+        "<h3>Open Data App Store</h3>",
+        "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit unterschiedlichen CKAN-Datensätzen konfiguriert werden.</p>"
       ],
       "erforderlich": "ja"
     },
@@ -172,21 +179,28 @@
     "datenStand": {
       "label": "Datenstand",
       "hilfe": "Freitext-Datum, z.B. 'Stand: Januar 2025'. Leer = ausgeblendet.",
-      "format": { "typ": "string", "laenge": 60 },
-      "default": "",
+      "format": {
+        "typ": "string",
+        "laenge": 60
+      },
+      "default": "Stand: abhängig vom ausgewählten Datensatz",
       "erforderlich": "nein"
     },
     "datenquelleHinweis": {
       "label": "Methodik / Datenquelle-Hinweis",
       "hilfe": "Herkunft, Erhebungsmethode, Limitierungen (Markdown/HTML). Leer = ausgeblendet.",
-      "format": { "typ": "markdown" },
+      "format": {
+        "typ": "markdown"
+      },
       "default": "Diese App sendet den ausgewählten Datensatz an Google Gemini zur KI-gestützten Analyse. Die Analyse dauert je nach Dateigröße 30–60 Sekunden. Ergebnisse sind KI-generiert und können Fehler enthalten. Der vollständige Prompt lautet: 'Analysiere den folgenden Datensatz...' Die Daten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.",
       "erforderlich": "nein"
     },
     "weiterfuehrendeLinks": {
       "label": "Weiterführende Links",
       "hilfe": "Verwandte Datensätze / Hintergrundquellen (Markdown/HTML). Leer = ausgeblendet.",
-      "format": { "typ": "markdown" },
+      "format": {
+        "typ": "markdown"
+      },
       "default": "<ul><li><a href=\"https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024\" target=\"_blank\">CKAN-Datensatz</a></li><li><a href=\"https://deepmind.google/technologies/gemini/\" target=\"_blank\">Google Gemini Dokumentation</a></li><li><a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google Datenschutzerklärung</a></li></ul>",
       "erforderlich": "nein"
     },
