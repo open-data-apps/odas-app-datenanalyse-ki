@@ -45,6 +45,84 @@ function renderMethodikbox(configdata) {
   );
 }
 
+function isOdasProxyEnabled(configdata = {}) {
+  return String(configdata.proxyAktiv || "").trim().toLowerCase() === "ja";
+}
+
+function extractPathFromUrl(url) {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.pathname + parsedUrl.search;
+  } catch (_error) {
+    return String(url || "");
+  }
+}
+
+function getOdasAppBasePath(pathname) {
+  let appPath =
+    pathname === undefined
+      ? typeof window !== "undefined"
+        ? window.location.pathname
+        : "/"
+      : String(pathname || "/");
+
+  if (!appPath.endsWith("/")) {
+    const lastSlashIndex = appPath.lastIndexOf("/");
+    const lastSegment = appPath.substring(lastSlashIndex + 1);
+    if (lastSegment.includes(".")) {
+      appPath = appPath.substring(0, lastSlashIndex + 1);
+    }
+  }
+
+  return appPath.replace(/\/+$/, "");
+}
+
+function getOdasProxyEndpoint(targetUrl, pathname) {
+  const appPath = getOdasAppBasePath(pathname);
+  return `${appPath}/odp-data?path=${encodeURIComponent(
+    extractPathFromUrl(targetUrl),
+  )}`;
+}
+
+async function fetchViaOdasProxy(targetUrl) {
+  const response = await fetch(getOdasProxyEndpoint(targetUrl), {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`ODAS-Proxy-Fehler: HTTP ${response.status}`);
+  }
+
+  const proxyData = await response.json();
+  if (!proxyData || typeof proxyData.content !== "string") {
+    throw new Error("ODAS-Proxy-Antwort enthält keinen content-String.");
+  }
+
+  return proxyData.content;
+}
+
+async function fetchOdasResource(targetUrl, configdata = {}) {
+  if (isOdasProxyEnabled(configdata)) {
+    return fetchViaOdasProxy(targetUrl);
+  }
+
+  try {
+    const response = await fetch(targetUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.text();
+  } catch (error) {
+    throw new Error(
+      `Direkter Datenabruf fehlgeschlagen (${error.message}). Bitte prüfen Sie die Daten-URL und die CORS-Freigabe der Datenquelle.`,
+    );
+  }
+}
+
+async function fetchOdasJson(targetUrl, configdata = {}) {
+  return JSON.parse(await fetchOdasResource(targetUrl, configdata));
+}
+
 async function app(configdata, enclosingHtmlDivElement) {
   const cfg = await Promise.resolve(configdata);
   enclosingHtmlDivElement.innerHTML = "";
@@ -240,30 +318,10 @@ async function showGeneralAnalysis(container, cfg) {
 }
 
 async function loadGeneralAnalysisContent(container, cfg) {
-  // Hilfsfunktion: Nur Pfad aus vollständiger URL extrahieren
-  function extractPathFromUrl(url) {
-    try {
-      const u = new URL(url);
-      return u.pathname + u.search;
-    } catch (e) {
-      return url;
-    }
-  }
-
   let pkg;
   try {
-    // Proxy-API verwenden
-    const fullPath = window.location.pathname.replace(/\/+$/, "");
-    const resourcePath = extractPathFromUrl(cfg.apiurl);
-    const proxyEndpoint = `${fullPath}/odp-data?path=${resourcePath}`;
-    const resp = await fetch(proxyEndpoint, { method: "POST" });
-    const proxyData = await resp.json();
-    let json;
-    try {
-      json = JSON.parse(proxyData.content);
-    } catch (e) {
-      throw new Error("Fehler beim Parsen der Datensatzdaten");
-    }
+    // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
+    const json = await fetchOdasJson(cfg.apiurl, cfg);
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -493,30 +551,10 @@ async function showComparisonAnalysis(container, cfg) {
 }
 
 async function loadComparisonAnalysisContent(container, cfg) {
-  // Hilfsfunktion: Nur Pfad aus vollständiger URL extrahieren
-  function extractPathFromUrl(url) {
-    try {
-      const u = new URL(url);
-      return u.pathname + u.search;
-    } catch (e) {
-      return url;
-    }
-  }
-
   let dataset1;
   try {
-    // Proxy-API verwenden für ersten Datensatz (aus Config)
-    const fullPath = window.location.pathname.replace(/\/+$/, "");
-    const resourcePath = extractPathFromUrl(cfg.apiurl);
-    const proxyEndpoint = `${fullPath}/odp-data?path=${resourcePath}`;
-    const resp = await fetch(proxyEndpoint, { method: "POST" });
-    const proxyData = await resp.json();
-    let json;
-    try {
-      json = JSON.parse(proxyData.content);
-    } catch (e) {
-      throw new Error("Fehler beim Parsen der Datensatzdaten");
-    }
+    // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
+    const json = await fetchOdasJson(cfg.apiurl, cfg);
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -637,7 +675,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg) {
       statusEl.innerHTML =
         '<span class="status-indicator status-loading"></span>Lade Datensatz...';
 
-      dataset2 = await loadDatasetFromUrl(url);
+      dataset2 = await loadDatasetFromUrl(url, cfg);
       if (dataset2) {
         populateResourceSelect("resource2-select", dataset2.resources);
         statusEl.innerHTML =
@@ -753,30 +791,10 @@ async function showSearchAnalysis(container, cfg) {
 }
 
 async function loadSearchAnalysisContent(container, cfg) {
-  // Hilfsfunktion: Nur Pfad aus vollständiger URL extrahieren
-  function extractPathFromUrl(url) {
-    try {
-      const u = new URL(url);
-      return u.pathname + u.search;
-    } catch (e) {
-      return url;
-    }
-  }
-
   let pkg;
   try {
-    // Proxy-API verwenden
-    const fullPath = window.location.pathname.replace(/\/+$/, "");
-    const resourcePath = extractPathFromUrl(cfg.apiurl);
-    const proxyEndpoint = `${fullPath}/odp-data?path=${resourcePath}`;
-    const resp = await fetch(proxyEndpoint, { method: "POST" });
-    const proxyData = await resp.json();
-    let json;
-    try {
-      json = JSON.parse(proxyData.content);
-    } catch (e) {
-      throw new Error("Fehler beim Parsen der Datensatzdaten");
-    }
+    // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
+    const json = await fetchOdasJson(cfg.apiurl, cfg);
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -962,7 +980,7 @@ function setupSearchAnalysisEvents(pkg, cfg) {
 }
 
 // Hilfsfunktionen
-async function loadDatasetFromUrl(url) {
+async function loadDatasetFromUrl(url, cfg = {}) {
   try {
     // Vereinfachte URL-Verarbeitung für CKAN APIs
     let apiUrl = url;
@@ -972,13 +990,8 @@ async function loadDatasetFromUrl(url) {
       apiUrl = `${baseUrl}/api/3/action/package_show?id=${datasetId}`;
     }
 
-    const fullPath = window.location.pathname.replace(/\/+$/, "");
-    const resourcePath = apiUrl.replace(/^https?:\/\/[^\/]+/, "");
-    const proxyEndpoint = `${fullPath}/odp-data?path=${resourcePath}`;
-
-    const resp = await fetch(proxyEndpoint, { method: "POST" });
-    const proxyData = await resp.json();
-    const json = JSON.parse(proxyData.content);
+    // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
+    const json = await fetchOdasJson(apiUrl, cfg);
 
     if (json.success && json.result) {
       json.result.resources = Array.isArray(json.result.resources)

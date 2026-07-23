@@ -1,5 +1,6 @@
 {
   "apiVersion": "1",
+  "proxyAktiv": "nein",
   "titel": "KI-Analyse App",
   "seitentitel": "KI-Analyse",
   "icon": "logo_ondics.png",
