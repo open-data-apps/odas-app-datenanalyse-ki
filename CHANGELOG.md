@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0 - 2026-07-31
+- FIX: KI-Endpunkte und Lottie-Ladeanimation nutzen getOdasAppBasePath() statt window.location.href - die URLs enthielten das Hash-Fragment und zeigten ins Leere (F-05)
+- FIX: aiResp.ok wird vor dem JSON-Parsen geprueft, damit ein HTML-Antwortkoerper nicht als Parse-Fehler verschleiert wird (F-05)
+- CHG: fehlendes Pflicht-Asset assets/branding.css ergaenzt und brandingCSSFile lokal aktiviert
+
 ## 1.6.0 - 2026-07-31
 - CHG: toter Konfigurationsschlüssel lizenz entfernt (F-17)
 - CHG: brandingCSS und brandingCSSFile als Base-Abhängigkeiten deklariert und lokal gespiegelt (F-17)

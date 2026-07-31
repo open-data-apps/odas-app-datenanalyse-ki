@@ -297,7 +297,7 @@ async function showGeneralAnalysis(container, cfg) {
         <div id="general-analysis-content">
           <div class="loading-container">
             <lottie-player
-              src="${window.location.href}assets/loading.json"
+              src="${getOdasAppBasePath()}/assets/loading.json"
               background="transparent"
               speed="1"
               style="width: 150px; height: 150px;"
@@ -468,7 +468,7 @@ function setupGeneralAnalysisEvents(pkg, cfg) {
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
-          src="${window.location.href}assets/loading.json"
+          src="${getOdasAppBasePath()}/assets/loading.json"
           background="transparent"
           speed="1"
           style="width: 150px; height: 150px;"
@@ -529,7 +529,7 @@ async function showComparisonAnalysis(container, cfg) {
         <div id="comparison-analysis-content">
           <div class="loading-container">
             <lottie-player
-              src="${window.location.href}assets/loading.json"
+              src="${getOdasAppBasePath()}/assets/loading.json"
               background="transparent"
               speed="1"
               style="width: 150px; height: 150px;"
@@ -701,7 +701,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg) {
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
-          src="${window.location.href}assets/loading.json"
+          src="${getOdasAppBasePath()}/assets/loading.json"
           background="transparent"
           speed="1"
           style="width: 150px; height: 150px;"
@@ -770,7 +770,7 @@ async function showSearchAnalysis(container, cfg) {
         <div id="search-analysis-content">
           <div class="loading-container">
             <lottie-player
-              src="${window.location.href}assets/loading.json"
+              src="${getOdasAppBasePath()}/assets/loading.json"
               background="transparent"
               speed="1"
               style="width: 150px; height: 150px;"
@@ -935,7 +935,7 @@ function setupSearchAnalysisEvents(pkg, cfg) {
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
-          src="${window.location.href}assets/loading.json"
+          src="${getOdasAppBasePath()}/assets/loading.json"
           background="transparent"
           speed="1"
           style="width: 150px; height: 150px;"
@@ -1044,7 +1044,7 @@ async function sendToAI(
         `- Beurteile Qualität und Vollständigkeit der Daten`;
     }
 
-    const aiUrl = `${window.location.href.replace(/\/+$/, "")}/ai`;
+    const aiUrl = `${getOdasAppBasePath()}/ai`;
     const aiResp = await fetch(aiUrl, {
       method: "POST",
       headers: {
@@ -1055,6 +1055,10 @@ async function sendToAI(
         prompt: promptText,
       }),
     });
+
+    if (!aiResp.ok) {
+      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
+    }
 
     const result = await aiResp.json();
     return result;
@@ -1098,7 +1102,7 @@ async function sendComparisonToAI(resource1, resource2, dataset1, dataset2) {
       `8. HANDLUNGSEMPFEHLUNGEN: Gib konkrete Empfehlungen für die kombinierte Nutzung oder weitere Analyseschritte\n\n` +
       `Strukturiere deine Antwort klar und verwende HTML-Formatierung für bessere Lesbarkeit. Beginne mit einer Executive Summary der wichtigsten Erkenntnisse.`;
 
-    const aiUrl = `${window.location.href.replace(/\/+$/, "")}/ai`;
+    const aiUrl = `${getOdasAppBasePath()}/ai`;
     const aiResp = await fetch(aiUrl, {
       method: "POST",
       headers: {
@@ -1109,6 +1113,10 @@ async function sendComparisonToAI(resource1, resource2, dataset1, dataset2) {
         prompt: promptText,
       }),
     });
+
+    if (!aiResp.ok) {
+      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
+    }
 
     const result = await aiResp.json();
     return result;
@@ -1150,7 +1158,7 @@ async function sendSearchToAI(resource, dataset, searchQuery) {
       `- Gib Hinweise für weiterführende Analysen\n\n` +
       `Konzentriere dich ausschließlich auf die Beantwortung der spezifischen Suchanfrage und liefere präzise, verwertbare Ergebnisse.`;
 
-    const aiUrl = `${window.location.href.replace(/\/+$/, "")}/ai`;
+    const aiUrl = `${getOdasAppBasePath()}/ai`;
     const aiResp = await fetch(aiUrl, {
       method: "POST",
       headers: {
@@ -1161,6 +1169,10 @@ async function sendSearchToAI(resource, dataset, searchQuery) {
         prompt: promptText,
       }),
     });
+
+    if (!aiResp.ok) {
+      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
+    }
 
     const result = await aiResp.json();
     return result;
