@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 - 2026-07-31
+- DOC: Abschnitt „Einschraenkung im Standalone-Betrieb" ergaenzt (F-04) - die KI-Analyse
+  benoetigt den ODAS-Dienst `…/ai` und steht standalone nicht bereit
+- DOC: Denselben Hinweis in die App-Beschreibung („Ueber diese App") aufgenommen
+
 ## 1.7.0 - 2026-07-31
 - FIX: KI-Endpunkte und Lottie-Ladeanimation nutzen getOdasAppBasePath() statt window.location.href - die URLs enthielten das Hash-Fragment und zeigten ins Leere (F-05)
 - FIX: aiResp.ok wird vor dem JSON-Parsen geprueft, damit ein HTML-Antwortkoerper nicht als Parse-Fehler verschleiert wird (F-05)

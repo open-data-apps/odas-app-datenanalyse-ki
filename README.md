@@ -61,6 +61,20 @@ Bei `nein` muss die Datenquelle CORS freigeben.
 
 ### Standalone-Betrieb
 
+> **Einschraenkung im Standalone-Betrieb.** Die Kernfunktion dieser App —
+> Ausfuehren einer KI-Analyse — benoetigt den ODAS-Plattformdienst `…/ai` und
+> steht **ohne ODAS nicht zur Verfuegung**. Die App ruft den ODAS-KI-Endpunkt `…/ai` auf. Den Zugang zum Sprachmodell haelt
+ausschliesslich das ODAS-Backend; die App besitzt keinen eigenen Zugang.
+> Die mitgelieferte `nginx.conf` kennt nur `/`, `= /config`, `/odas-config/` und
+> `/assets/`; ein Request auf `…/ai` landet im Verzeichnis-Handler und
+> ergibt 404. Die Schaltflaeche „Analyse starten!" ist im Standalone-Betrieb
+> daher wirkungslos.
+>
+> Alle uebrigen Funktionen — Oberflaeche, Konfiguration, Anzeige — laufen standalone
+> vollstaendig. Wer die App eigenstaendig betreiben will, muss `…/ai` durch
+> einen eigenen Dienst ersetzen; das ist derzeit **nicht** ueber die Konfiguration
+> moeglich, sondern erfordert eine Codeanpassung.
+
 Voraussetzung: ein laufender Traefik mit dem externen Docker-Netzwerk `proxynet`,
 dem EntryPoint `websecure` und dem Zertifikatsresolver `letsencrypt`.
 

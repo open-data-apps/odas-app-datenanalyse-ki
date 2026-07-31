@@ -17,6 +17,7 @@
     "<h3>Datenquelle</h3>",
     "<p>Die analysierten Daten stammen aus dem konfigurierten Open-Data-Datensatz.</p>",
     "<ul><li><strong>Open Data Portal:</strong> <a href=\"https://open-data-musterstadt.ckan.de\" target=\"_blank\" rel=\"noopener\">Open Data Musterstadt</a></li><li><strong>Datensatz:</strong> <a href=\"https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen/resource/39627e03-611f-4ab6-9af2-e83ab5121b36\" target=\"_blank\" rel=\"noopener\">Konfigurierter Beispieldatensatz</a></li><li><strong>Ressource/API-Endpunkt:</strong> <a href=\"https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen\" target=\"_blank\" rel=\"noopener\">CKAN package_show API</a></li></ul>",
+    "<p><strong>Hinweis zum Betrieb:</strong> Die KI-Analyse wird vom ODAS-Backend ausgef&uuml;hrt. Beim eigenst&auml;ndigen Betrieb ohne ODAS bleiben Daten&shy;anzeige und Filter nutzbar, die Analysefunktion steht dort jedoch nicht zur Verf&uuml;gung.</p>",
     "<h3>Open Data App Store</h3>",
     "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit unterschiedlichen CKAN-Datensätzen konfiguriert werden.</p>"
   ],
