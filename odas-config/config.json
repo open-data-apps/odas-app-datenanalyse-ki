@@ -39,9 +39,11 @@
     "App-Entwickler: Ondics GmbH | ",
     "Provided by: Ondics GmbH"
   ],
+  "datenbeschreibung": "Hier ist die Beschreibung für die Daten.",
   "apiurl": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024",
   "sprache": "de",
   "weiterfuehrendeLinks": "<ul><li><a href=\"https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024\" target=\"_blank\">CKAN-Datensatz</a></li><li><a href=\"https://deepmind.google/technologies/gemini/\" target=\"_blank\">Google Gemini Dokumentation</a></li><li><a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google Datenschutzerklärung</a></li></ul>",
   "datenStand": "Stand: abhängig vom ausgewählten Datensatz",
-  "datenquelleHinweis": "Diese App sendet den ausgewählten Datensatz an Google Gemini zur KI-gestützten Analyse. Die Analyse dauert je nach Dateigröße 30–60 Sekunden. Ergebnisse sind KI-generiert und können Fehler enthalten. Der vollständige Prompt lautet: 'Analysiere den folgenden Datensatz...' Die Daten werden verschlüsselt übertragen und nicht dauerhaft gespeichert."
+  "datenquelleHinweis": "Diese App sendet den ausgewählten Datensatz an Google Gemini zur KI-gestützten Analyse. Die Analyse dauert je nach Dateigröße 30–60 Sekunden. Ergebnisse sind KI-generiert und können Fehler enthalten. Der vollständige Prompt lautet: 'Analysiere den folgenden Datensatz...' Die Daten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.",
+  "brandingCSSFile": ""
 }

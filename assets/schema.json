@@ -1,1 +1,69 @@
-{}
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "name": "odas-app-datenanalyse-ki",
+  "title": "Ressourcen eines CKAN-Datensatzes",
+  "description": "Die App ruft den CKAN-Endpunkt package_show auf und wertet die Ressourcenliste des Datensatzes aus (result.resources). Eine Zeile entspricht einer Ressource. Aus dem umgebenden Datensatz werden zusätzlich title, name, notes und metadata_modified gelesen; letzteres liefert den angezeigten Datenstand.",
+  "fields": [
+    {
+      "name": "id",
+      "title": "Ressourcen-ID",
+      "type": "string",
+      "description": "Eindeutige CKAN-Kennung der Ressource.",
+      "constraints": {
+        "required": true
+      }
+    },
+    {
+      "name": "name",
+      "title": "Name",
+      "type": "string",
+      "description": "Anzeigename der Ressource in der Auswahlliste."
+    },
+    {
+      "name": "title",
+      "title": "Titel",
+      "type": "string",
+      "description": "Alternativer Titel der Ressource, sofern das Portal ihn liefert."
+    },
+    {
+      "name": "description",
+      "title": "Beschreibung",
+      "type": "string",
+      "description": "Beschreibungstext der Ressource. Wird ersatzweise aus 'notes' gelesen."
+    },
+    {
+      "name": "notes",
+      "title": "Anmerkungen",
+      "type": "string",
+      "description": "Ergänzende Anmerkungen zur Ressource; dient als Rückfallwert für die Beschreibung."
+    },
+    {
+      "name": "url",
+      "title": "Ressourcen-URL",
+      "type": "string",
+      "format": "uri",
+      "description": "Direkter Link auf die Datei oder den Endpunkt der Ressource."
+    },
+    {
+      "name": "downloadURL",
+      "title": "Download-URL",
+      "type": "string",
+      "format": "uri",
+      "description": "Alternativer Download-Link, sofern das Portal ihn getrennt ausweist."
+    },
+    {
+      "name": "accessURL",
+      "title": "Zugriffs-URL",
+      "type": "string",
+      "format": "uri",
+      "description": "Alternativer Zugriffs-Link, sofern das Portal ihn getrennt ausweist."
+    },
+    {
+      "name": "format",
+      "title": "Format",
+      "type": "string",
+      "description": "Datenformat der Ressource, zum Beispiel CSV oder JSON."
+    }
+  ],
+  "missingValues": [""]
+}
