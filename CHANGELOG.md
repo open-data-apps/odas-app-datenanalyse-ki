@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0 - 2026-07-31
+- CHG: ZIP-Name auf die Konvention `${current_dir}.zip` umgestellt (F-22) - das
+  Liefer-Artefakt heisst jetzt `odas-app-datenanalyse-ki.zip` statt
+  `odas-app-ki-analyse.zip`
+
 ## 1.8.0 - 2026-07-31
 - DOC: Abschnitt „Einschraenkung im Standalone-Betrieb" ergaenzt (F-04) - die KI-Analyse
   benoetigt den ODAS-Dienst `…/ai` und steht standalone nicht bereit
