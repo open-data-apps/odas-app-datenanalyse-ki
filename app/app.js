@@ -1186,11 +1186,11 @@ function addToHead() {
   const fa = document.createElement("link");
   fa.rel = "stylesheet";
   fa.href =
-    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+    "vendor/fontawesome/css/all.min.css";
   document.head.appendChild(fa);
 
   const lottie = document.createElement("script");
   lottie.src =
-    "https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js";
+    "vendor/lottie/lottie-player.js";
   document.head.appendChild(lottie);
 }

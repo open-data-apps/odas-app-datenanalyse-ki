@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.15.0 - 2026-08-06
+- FIX: Font Awesome und Lottie Player vendored in `app/vendor/` statt von CDN geladen (Vendoring Teil 3) — Standalone-Betrieb laedt die Zusatzbibliotheken nicht mehr extern
+
 ## 1.14.0 - 2026-08-06
 - FIX: Lottie Player auf @2.0.12 exakt gepinnt (vorher @latest — bei jedem Aufruf eine andere Version, Voraussetzung fuer Vendoring)
 
