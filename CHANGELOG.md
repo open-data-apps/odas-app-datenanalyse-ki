@@ -5,6 +5,7 @@
 
 ## 1.15.0 - 2026-08-06
 - FIX: Font Awesome und Lottie Player vendored in `app/vendor/` statt von CDN geladen (Vendoring Teil 3) — Standalone-Betrieb laedt die Zusatzbibliotheken nicht mehr extern
+- FIX: Font-Awesome-`all.min.css` bereinigt: der ueberfluessige `.ttf`-Fallback (10 `format("truetype")`-Referenzen, ca. 642 KB) entfernt — einzige Aenderung an einer Fremdbibliothek dieser Welle; `woff2`-Dateien (4) bleiben unveraendert, die `../webfonts/`-Struktur bleibt erhalten
 
 ## 1.14.0 - 2026-08-06
 - FIX: Lottie Player auf @2.0.12 exakt gepinnt (vorher @latest — bei jedem Aufruf eine andere Version, Voraussetzung fuer Vendoring)
