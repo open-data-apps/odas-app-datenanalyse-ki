@@ -101,7 +101,7 @@ Beim Aufruf dieser App werden folgende externe Server kontaktiert:
 - `unpkg.com` — Lottie Player (Animationen)
 - `cdnjs.cloudflare.com` — Font Awesome (Icons)
 
-Diese Anbieter bleiben auch im Standalone-Betrieb extern; ein vollständig autarker Betrieb ohne Internetzugang ist derzeit nicht möglich. Bootstrap, Leaflet und Chart.js werden seit Version 1.12.0 lokal aus `app/vendor/` ausgeliefert und nicht mehr extern geladen.
+Diese Anbieter bleiben auch im Standalone-Betrieb extern; ein vollständig autarker Betrieb ohne Internetzugang ist derzeit nicht möglich. Bootstrap, Leaflet und Chart.js werden seit Version 1.11.0 lokal aus `app/vendor/` ausgeliefert und nicht mehr extern geladen.
 
 ### Auslieferung an den ODAS
 
