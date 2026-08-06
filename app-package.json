@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Diese App bringt Künstliche Intelligenz ins Open Data Portal! Mit wenigen Klicks können Datensätze automatisch analysiert werden.",
@@ -151,7 +151,9 @@
       },
       "default": [
         "_multiline_",
-        "Alle Daten sind geschützt."
+        "<p>Diese App verarbeitet die angezeigten offenen Daten im Browser. Der Inhalt des ausgewählten Datensatzes und die Fragestellung werden an den KI-Endpunkt der ODAS-Instanz übermittelt und dort verarbeitet. Es werden keine Cookies gesetzt und keine Nutzungsstatistiken erhoben.</p>",
+        "<p>Alle für die Darstellung benötigten Programmbibliotheken werden mit der App ausgeliefert. Beim Aufruf werden dafür keine externen Server kontaktiert.</p>",
+        "<p>Die angezeigten Daten werden vom Browser direkt aus der konfigurierten Datenquelle geladen. Dabei werden technisch bedingt IP-Adresse und Browserkennung an deren Betreiber übermittelt. Maßgeblich ist der Schalter <code>proxyAktiv</code> der Instanz-Konfiguration.</p>"
       ],
       "erforderlich": "ja"
     },
