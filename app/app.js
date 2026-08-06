@@ -178,17 +178,17 @@ function showFunctionSelectionMenu(container, cfg) {
       </h5>
       <p class="card-text text-muted">Wählen Sie die gewünschte Analysefunktion für ${datasetName}:</p>
       <div class="d-grid gap-3 function-buttons">
-        <button id="general-analysis-btn" class="btn btn-primary">
+        <button id="daki-general-analysis-btn" class="btn btn-primary">
           <i class="fas fa-chart-bar feature-icon"></i>
           <strong>Allgemeine Datensatzanalyse</strong>
           <br><small class="text-white-50">Umfassende KI-Analyse des Datensatzes: ${datasetName}</small>
         </button>
-        <button id="comparison-analysis-btn" class="btn btn-success">
+        <button id="daki-comparison-analysis-btn" class="btn btn-success">
           <i class="fas fa-balance-scale feature-icon"></i>
           <strong>Datensatzvergleichsanalyse</strong>
           <br><small class="text-white-50">Vergleiche ${datasetName} auf Gemeinsamkeiten und Unterschiede mit einem zweiten Datensatz</small>
         </button>
-        <button id="search-analysis-btn" class="btn btn-info">
+        <button id="daki-search-analysis-btn" class="btn btn-info">
           <i class="fas fa-search feature-icon"></i>
           <strong>Datensatzsuche</strong>
           <br><small class="text-white-50">Gezielte Suche nach spezifischen Informationen im Datensatz: ${datasetName}</small>
@@ -219,25 +219,25 @@ function showFunctionSelectionMenu(container, cfg) {
   }
 
   // Event-Listener für die Buttons
-  document
-    .getElementById("general-analysis-btn")
+  container
+    .querySelector("#daki-general-analysis-btn")
     .addEventListener("click", () => {
       minimizeSelectionMenu(menuCard);
-      showGeneralAnalysis(contentContainer, cfg);
+      showGeneralAnalysis(contentContainer, cfg, container);
     });
 
-  document
-    .getElementById("comparison-analysis-btn")
+  container
+    .querySelector("#daki-comparison-analysis-btn")
     .addEventListener("click", () => {
       minimizeSelectionMenu(menuCard);
-      showComparisonAnalysis(contentContainer, cfg);
+      showComparisonAnalysis(contentContainer, cfg, container);
     });
 
-  document
-    .getElementById("search-analysis-btn")
+  container
+    .querySelector("#daki-search-analysis-btn")
     .addEventListener("click", () => {
       minimizeSelectionMenu(menuCard);
-      showSearchAnalysis(contentContainer, cfg);
+      showSearchAnalysis(contentContainer, cfg, container);
     });
 }
 
@@ -248,7 +248,7 @@ function minimizeSelectionMenu(menuCard) {
 }
 
 // Hilfsfunktion zum Hinzufügen des Zurück-Buttons
-function addBackButtonIfNeeded(container) {
+function addBackButtonIfNeeded(container, root) {
   if (!container.querySelector(".back-to-menu")) {
     const backButtonContainer = document.createElement("div");
     backButtonContainer.className = "mb-3 back-to-menu";
@@ -261,7 +261,7 @@ function addBackButtonIfNeeded(container) {
     const backButton = backButtonContainer.querySelector("button");
     backButton.addEventListener("click", () => {
       // Auswahlmenü wieder einblenden
-      const menuCard = document.querySelector(".function-selection-card");
+      const menuCard = root.querySelector(".function-selection-card");
       if (menuCard) {
         menuCard.style.display = "block";
       }
@@ -274,9 +274,9 @@ function addBackButtonIfNeeded(container) {
 }
 
 // Allgemeine Datensatzanalyse (ursprüngliche Funktion)
-async function showGeneralAnalysis(container, cfg) {
+async function showGeneralAnalysis(container, cfg, root) {
   // Zurück-Button hinzufügen wenn noch nicht vorhanden
-  addBackButtonIfNeeded(container);
+  addBackButtonIfNeeded(container, root);
 
   // Datensatzname aus der Konfiguration extrahieren
   const datasetName = extractDatasetNameFromConfig(cfg);
@@ -294,7 +294,7 @@ async function showGeneralAnalysis(container, cfg) {
           }
         </h5>
         <p class="card-text">Laden und analysieren Sie einen Datensatz mit umfassender KI-Unterstützung.</p>
-        <div id="general-analysis-content">
+        <div id="daki-general-analysis-content">
           <div class="loading-container">
             <lottie-player
               src="${getOdasAppBasePath()}/assets/loading.json"
@@ -313,11 +313,11 @@ async function showGeneralAnalysis(container, cfg) {
 
   container.appendChild(functionContent);
 
-  const contentDiv = document.getElementById("general-analysis-content");
+  const contentDiv = container.querySelector("#daki-general-analysis-content");
   await loadGeneralAnalysisContent(contentDiv, cfg);
 }
 
-async function loadGeneralAnalysisContent(container, cfg) {
+async function loadGeneralAnalysisContent(container, cfg, root) {
   let pkg;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
@@ -386,10 +386,10 @@ async function loadGeneralAnalysisContent(container, cfg) {
 
   container.innerHTML += `
     <div class="mb-3">
-      <label for="resource-select" class="form-label">
+      <label for="daki-resource-select" class="form-label">
         <i class="fas fa-file-alt me-2"></i><strong>Ressource wählen:</strong>
       </label>
-      <select id="resource-select" class="form-select">
+      <select id="daki-resource-select" class="form-select">
         ${pkg.resources
           .map(
             (r, idx) =>
@@ -399,32 +399,32 @@ async function loadGeneralAnalysisContent(container, cfg) {
           )
           .join("")}
       </select>
-      <div id="resource-desc" class="form-text mt-2"></div>
+      <div id="daki-resource-desc" class="form-text mt-2"></div>
     </div>
     
     <div class="text-center mb-4">
-      <button id="analyze-btn" class="btn btn-primary btn-lg me-3">
+      <button id="daki-analyze-btn" class="btn btn-primary btn-lg me-3">
         <i class="fas fa-magic me-2"></i>Analyse starten!
       </button>
       <br>
-      <small id="analyze-info" class="text-muted mt-2 d-block">
+      <small id="daki-analyze-info" class="text-muted mt-2 d-block">
         <i class="fas fa-info-circle me-1"></i>
         Die Analyse wird mit KI durchgeführt und dauert ca. 30-60 Sekunden.
       </small>
     </div>
     
-    <div id="analysis-result"></div>
+    <div id="daki-analysis-result"></div>
   `;
 
   // Event-Listener für Ressourcen-Auswahl und Analyse
-  setupGeneralAnalysisEvents(pkg, cfg);
+  setupGeneralAnalysisEvents(pkg, cfg, root);
 }
 
-function setupGeneralAnalysisEvents(pkg, cfg) {
-  const selectEl = document.getElementById("resource-select");
-  const resourceDesc = document.getElementById("resource-desc");
-  const analyzeBtn = document.getElementById("analyze-btn");
-  const analyzeInfo = document.getElementById("analyze-info");
+function setupGeneralAnalysisEvents(pkg, cfg, root) {
+  const selectEl = root.querySelector("#daki-resource-select");
+  const resourceDesc = root.querySelector("#daki-resource-desc");
+  const analyzeBtn = root.querySelector("#daki-analyze-btn");
+  const analyzeInfo = root.querySelector("#daki-analyze-info");
 
   function updateResourceInfo() {
     const selectedIdx = parseInt(selectEl.value, 10);
@@ -464,7 +464,7 @@ function setupGeneralAnalysisEvents(pkg, cfg) {
       resource.id ||
       `Ressource ${selectedIdx + 1}`;
 
-    const resultDiv = document.getElementById("analysis-result");
+    const resultDiv = root.querySelector("#daki-analysis-result");
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
@@ -513,9 +513,9 @@ function setupGeneralAnalysisEvents(pkg, cfg) {
 }
 
 // Datensatzvergleichsanalyse
-async function showComparisonAnalysis(container, cfg) {
+async function showComparisonAnalysis(container, cfg, root) {
   // Zurück-Button hinzufügen wenn noch nicht vorhanden
-  addBackButtonIfNeeded(container);
+  addBackButtonIfNeeded(container, root);
 
   const functionContent = document.createElement("div");
   functionContent.innerHTML = `
@@ -526,7 +526,7 @@ async function showComparisonAnalysis(container, cfg) {
           Datensatzvergleichsanalyse
         </h5>
         <p class="card-text">Vergleichen Sie den konfigurierten Datensatz mit einem zweiten Datensatz systematisch auf Gemeinsamkeiten, Unterschiede und übergreifende Trends.</p>
-        <div id="comparison-analysis-content">
+        <div id="daki-comparison-analysis-content">
           <div class="loading-container">
             <lottie-player
               src="${getOdasAppBasePath()}/assets/loading.json"
@@ -541,16 +541,16 @@ async function showComparisonAnalysis(container, cfg) {
         </div>
       </div>
     </div>
-    <div id="comparison-result"></div>
+    <div id="daki-comparison-result"></div>
   `;
 
   container.appendChild(functionContent);
 
-  const contentDiv = document.getElementById("comparison-analysis-content");
+  const contentDiv = container.querySelector("#daki-comparison-analysis-content");
   await loadComparisonAnalysisContent(contentDiv, cfg);
 }
 
-async function loadComparisonAnalysisContent(container, cfg) {
+async function loadComparisonAnalysisContent(container, cfg, root) {
   let dataset1;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
@@ -599,10 +599,10 @@ async function loadComparisonAnalysisContent(container, cfg) {
             </div>
           </div>
         </div>
-        <label for="resource1-select" class="form-label">
+        <label for="daki-resource1-select" class="form-label">
           <i class="fas fa-file-alt me-2"></i><strong>Ressource wählen:</strong>
         </label>
-        <select id="resource1-select" class="form-select">
+        <select id="daki-resource1-select" class="form-select">
           ${dataset1.resources
             .map(
               (r, idx) =>
@@ -612,25 +612,25 @@ async function loadComparisonAnalysisContent(container, cfg) {
             )
             .join("")}
         </select>
-        <div id="resource1-desc" class="form-text mt-2"></div>
+        <div id="daki-resource1-desc" class="form-text mt-2"></div>
       </div>
       
       <div class="dataset-input-group">
         <h6><i class="fas fa-database me-2"></i>Zweiter Datensatz (Zum Vergleich)</h6>
-        <input type="text" id="dataset2-url" class="form-control mb-2" placeholder="URL zum zweiten Datensatz eingeben">
-        <select id="resource2-select" class="form-select mb-2" disabled>
+        <input type="text" id="daki-dataset2-url" class="form-control mb-2" placeholder="URL zum zweiten Datensatz eingeben">
+        <select id="daki-resource2-select" class="form-select mb-2" disabled>
           <option>Zuerst Datensatz laden...</option>
         </select>
-        <button id="load-dataset2-btn" class="btn btn-outline-primary btn-sm">
+        <button id="daki-load-dataset2-btn" class="btn btn-outline-primary btn-sm">
           <i class="fas fa-download me-1"></i>Datensatz 2 laden
         </button>
-        <div id="dataset2-status" class="mt-2"></div>
+        <div id="daki-dataset2-status" class="mt-2"></div>
       </div>
     </div>
     
     <hr>
     <div class="d-flex align-items-center justify-content-center">
-      <button id="compare-btn" class="btn btn-success btn-lg me-3" disabled>
+      <button id="daki-compare-btn" class="btn btn-success btn-lg me-3" disabled>
         <i class="fas fa-sync-alt me-2"></i>Vergleichsanalyse starten!
       </button>
       <small class="text-muted">
@@ -641,14 +641,14 @@ async function loadComparisonAnalysisContent(container, cfg) {
   `;
 
   // Event-Listener für Vergleichsanalyse einrichten
-  setupComparisonAnalysisEvents(dataset1, cfg);
+  setupComparisonAnalysisEvents(dataset1, cfg, root);
 }
 
-function setupComparisonAnalysisEvents(dataset1, cfg) {
+function setupComparisonAnalysisEvents(dataset1, cfg, root) {
   let dataset2 = null;
 
-  const selectEl1 = document.getElementById("resource1-select");
-  const resourceDesc1 = document.getElementById("resource1-desc");
+  const selectEl1 = root.querySelector("#daki-resource1-select");
+  const resourceDesc1 = root.querySelector("#daki-resource1-desc");
 
   function updateResource1Info() {
     const selectedIdx = parseInt(selectEl1.value, 10);
@@ -665,19 +665,19 @@ function setupComparisonAnalysisEvents(dataset1, cfg) {
   selectEl1.addEventListener("change", updateResource1Info);
   updateResource1Info();
 
-  document
-    .getElementById("load-dataset2-btn")
+  root
+    .querySelector("#daki-load-dataset2-btn")
     .addEventListener("click", async () => {
-      const url = document.getElementById("dataset2-url").value.trim();
+      const url = root.querySelector("#daki-dataset2-url").value.trim();
       if (!url) return;
 
-      const statusEl = document.getElementById("dataset2-status");
+      const statusEl = root.querySelector("#daki-dataset2-status");
       statusEl.innerHTML =
         '<span class="status-indicator status-loading"></span>Lade Datensatz...';
 
       dataset2 = await loadDatasetFromUrl(url, cfg);
       if (dataset2) {
-        populateResourceSelect("resource2-select", dataset2.resources);
+        populateResourceSelect("resource2-select", dataset2.resources, root);
         statusEl.innerHTML =
           '<span class="status-indicator status-success"></span><strong>Datensatz erfolgreich geladen</strong>';
         checkCompareButton();
@@ -687,17 +687,17 @@ function setupComparisonAnalysisEvents(dataset1, cfg) {
       }
     });
 
-  document.getElementById("compare-btn").addEventListener("click", async () => {
+  root.querySelector("#daki-compare-btn").addEventListener("click", async () => {
     const resource1Idx = parseInt(selectEl1.value, 10);
     const resource2Idx = parseInt(
-      document.getElementById("resource2-select").value,
+      root.querySelector("#daki-resource2-select").value,
       10
     );
 
     const resource1 = dataset1.resources[resource1Idx];
     const resource2 = dataset2.resources[resource2Idx];
 
-    const resultDiv = document.getElementById("comparison-result");
+    const resultDiv = root.querySelector("#daki-comparison-result");
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
@@ -744,7 +744,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg) {
   });
 
   function checkCompareButton() {
-    const btn = document.getElementById("compare-btn");
+    const btn = root.querySelector("#daki-compare-btn");
     btn.disabled = !dataset2;
     if (dataset2) {
       btn.innerHTML =
@@ -754,9 +754,9 @@ function setupComparisonAnalysisEvents(dataset1, cfg) {
 }
 
 // Datensatzsuche
-async function showSearchAnalysis(container, cfg) {
+async function showSearchAnalysis(container, cfg, root) {
   // Zurück-Button hinzufügen wenn noch nicht vorhanden
-  addBackButtonIfNeeded(container);
+  addBackButtonIfNeeded(container, root);
 
   const functionContent = document.createElement("div");
   functionContent.innerHTML = `
@@ -767,7 +767,7 @@ async function showSearchAnalysis(container, cfg) {
           Intelligente Datensatzsuche
         </h5>
         <p class="card-text">Nutzen Sie KI-gestützte Suche, um gezielt nach spezifischen Informationen in Ihren Daten zu suchen.</p>
-        <div id="search-analysis-content">
+        <div id="daki-search-analysis-content">
           <div class="loading-container">
             <lottie-player
               src="${getOdasAppBasePath()}/assets/loading.json"
@@ -786,11 +786,11 @@ async function showSearchAnalysis(container, cfg) {
 
   container.appendChild(functionContent);
 
-  const contentDiv = document.getElementById("search-analysis-content");
+  const contentDiv = container.querySelector("#daki-search-analysis-content");
   await loadSearchAnalysisContent(contentDiv, cfg);
 }
 
-async function loadSearchAnalysisContent(container, cfg) {
+async function loadSearchAnalysisContent(container, cfg, root) {
   let pkg;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
@@ -849,10 +849,10 @@ async function loadSearchAnalysisContent(container, cfg) {
 
   container.innerHTML += `
     <div class="mb-3">
-      <label for="search-resource-select" class="form-label">
+      <label for="daki-search-resource-select" class="form-label">
         <i class="fas fa-file-alt me-2"></i><strong>Ressource wählen:</strong>
       </label>
-      <select id="search-resource-select" class="form-select">
+      <select id="daki-search-resource-select" class="form-select">
         ${pkg.resources
           .map(
             (r, idx) =>
@@ -862,14 +862,14 @@ async function loadSearchAnalysisContent(container, cfg) {
           )
           .join("")}
       </select>
-      <div id="search-resource-desc" class="form-text mt-2"></div>
+      <div id="daki-search-resource-desc" class="form-text mt-2"></div>
     </div>
     
     <div class="mb-4">
-      <label for="search-query" class="form-label">
+      <label for="daki-search-query" class="form-label">
         <i class="fas fa-comment-dots me-2"></i><strong>Ihre Suchanfrage:</strong>
       </label>
-      <textarea id="search-query" class="form-control" rows="3" placeholder="Beschreiben Sie in natürlicher Sprache, wonach Sie suchen..."></textarea>
+      <textarea id="daki-search-query" class="form-control" rows="3" placeholder="Beschreiben Sie in natürlicher Sprache, wonach Sie suchen..."></textarea>
       <div class="form-text mt-2">
         <strong>Beispiele:</strong><br>
         • "Finde alle Einträge mit Temperaturwerten über 30°C"<br>
@@ -879,7 +879,7 @@ async function loadSearchAnalysisContent(container, cfg) {
     </div>
     
     <div class="text-center mb-4">
-      <button id="search-btn" class="btn btn-warning btn-lg me-3">
+      <button id="daki-search-btn" class="btn btn-warning btn-lg me-3">
         <i class="fas fa-magic me-2"></i>KI-Suche starten!
       </button>
       <br>
@@ -889,18 +889,18 @@ async function loadSearchAnalysisContent(container, cfg) {
       </small>
     </div>
     
-    <div id="search-result"></div>
+    <div id="daki-search-result"></div>
   `;
 
   // Event-Listener für Ressourcen-Auswahl und Suche
-  setupSearchAnalysisEvents(pkg, cfg);
+  setupSearchAnalysisEvents(pkg, cfg, root);
 }
 
-function setupSearchAnalysisEvents(pkg, cfg) {
-  const selectEl = document.getElementById("search-resource-select");
-  const resourceDesc = document.getElementById("search-resource-desc");
-  const searchBtn = document.getElementById("search-btn");
-  const searchQuery = document.getElementById("search-query");
+function setupSearchAnalysisEvents(pkg, cfg, root) {
+  const selectEl = root.querySelector("#daki-search-resource-select");
+  const resourceDesc = root.querySelector("#daki-search-resource-desc");
+  const searchBtn = root.querySelector("#daki-search-btn");
+  const searchQuery = root.querySelector("#daki-search-query");
 
   function updateResourceInfo() {
     const selectedIdx = parseInt(selectEl.value, 10);
@@ -931,7 +931,7 @@ function setupSearchAnalysisEvents(pkg, cfg) {
 
     if (!query) return;
 
-    const resultDiv = document.getElementById("search-result");
+    const resultDiv = root.querySelector("#daki-search-result");
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
@@ -1006,8 +1006,8 @@ async function loadDatasetFromUrl(url, cfg = {}) {
   }
 }
 
-function populateResourceSelect(selectId, resources) {
-  const select = document.getElementById(selectId);
+function populateResourceSelect(selectId, resources, root) {
+  const select = root.querySelector("#daki-" + selectId);
   select.innerHTML = resources
     .map(
       (r, idx) =>

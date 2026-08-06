@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.18.0 - 2026-08-06
+- CHG: DOM-Zugriffe auf den App-Container gescopt (F-25, Tranche 3): alle Elemente der App werden über den App-Container (container/root.querySelector) angesprochen statt über document; unpräfixierte IDs mit `daki-`-Präfix versehen (`general-analysis-btn` → `daki-general-analysis-btn`, `comparison-analysis-btn` → `daki-comparison-analysis-btn`, `search-analysis-btn` → `daki-search-analysis-btn`, `general-analysis-content` → `daki-general-analysis-content`, `resource-select` → `daki-resource-select`, `resource-desc` → `daki-resource-desc`, `analyze-btn` → `daki-analyze-btn`, `analyze-info` → `daki-analyze-info`, `analysis-result` → `daki-analysis-result`, `comparison-analysis-content` → `daki-comparison-analysis-content`, `resource1-select` → `daki-resource1-select`, `resource1-desc` → `daki-resource1-desc`, `load-dataset2-btn` → `daki-load-dataset2-btn`, `dataset2-url` → `daki-dataset2-url`, `dataset2-status` → `daki-dataset2-status`, `compare-btn` → `daki-compare-btn`, `resource2-select` → `daki-resource2-select`, `comparison-result` → `daki-comparison-result`, `search-analysis-content` → `daki-search-analysis-content`, `search-resource-select` → `daki-search-resource-select`, `search-resource-desc` → `daki-search-resource-desc`, `search-btn` → `daki-search-btn`, `search-query` → `daki-search-query`, `search-result` → `daki-search-result`); der Selektor `.function-selection-card` wird über den App-Container gescopt (kein Rename, Klasse); der Helper `populateResourceSelect` präfixiert seine ID an einer Stelle (root-Parameter)
+
 ## 1.17.0 - 2026-08-06
 - FIX: Datenschutzangabe beschreibt den tatsaechlichen Stand nach dem Vendoring (Welle G)
 
