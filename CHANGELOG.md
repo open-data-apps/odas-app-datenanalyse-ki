@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.14.0 - 2026-08-06
+- FIX: Lottie Player auf @2.0.12 exakt gepinnt (vorher @latest — bei jedem Aufruf eine andere Version, Voraussetzung fuer Vendoring)
+
 ## 1.13.0 - 2026-08-06
 - FIX: Base auf Template oda-generic 1.6.0 vereinheitlicht (Hook renderPageOverride)
 

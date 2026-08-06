@@ -1191,6 +1191,6 @@ function addToHead() {
 
   const lottie = document.createElement("script");
   lottie.src =
-    "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
+    "https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js";
   document.head.appendChild(lottie);
 }
