@@ -314,7 +314,7 @@ async function showGeneralAnalysis(container, cfg, root) {
   container.appendChild(functionContent);
 
   const contentDiv = container.querySelector("#daki-general-analysis-content");
-  await loadGeneralAnalysisContent(contentDiv, cfg);
+  await loadGeneralAnalysisContent(contentDiv, cfg, root);
 }
 
 async function loadGeneralAnalysisContent(container, cfg, root) {
@@ -547,7 +547,7 @@ async function showComparisonAnalysis(container, cfg, root) {
   container.appendChild(functionContent);
 
   const contentDiv = container.querySelector("#daki-comparison-analysis-content");
-  await loadComparisonAnalysisContent(contentDiv, cfg);
+  await loadComparisonAnalysisContent(contentDiv, cfg, root);
 }
 
 async function loadComparisonAnalysisContent(container, cfg, root) {
@@ -787,7 +787,7 @@ async function showSearchAnalysis(container, cfg, root) {
   container.appendChild(functionContent);
 
   const contentDiv = container.querySelector("#daki-search-analysis-content");
-  await loadSearchAnalysisContent(contentDiv, cfg);
+  await loadSearchAnalysisContent(contentDiv, cfg, root);
 }
 
 async function loadSearchAnalysisContent(container, cfg, root) {
