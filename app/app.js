@@ -1,3 +1,4 @@
+let dakiInstanzZaehler = 0;
 let dakiDatenStand = null;
 
 function escapeHtml(str) {
@@ -22,7 +23,7 @@ function renderWeitereInfos(configdata) {
   );
 }
 
-function renderMethodikbox(configdata) {
+function renderMethodikbox(configdata, dakiUid) {
   const hinweis = String(configdata.datenquelleHinweis || "").trim();
   const stand = String(configdata.datenStand || "").trim();
   if (!hinweis && !stand) return "";
@@ -32,12 +33,12 @@ function renderMethodikbox(configdata) {
   return (
     '<section class="daki-methodik mt-3">' +
     '<button class="daki-methodik-toggle collapsed" type="button" ' +
-    'data-bs-toggle="collapse" data-bs-target="#daki-methodik-body" ' +
-    'aria-expanded="false" aria-controls="daki-methodik-body">' +
+    'data-bs-toggle="collapse" data-bs-target="#daki-methodik-body-' + dakiUid + '" ' +
+    'aria-expanded="false" aria-controls="daki-methodik-body-' + dakiUid + '">' +
     '<h2 class="h5 mb-0">Methodik &amp; Datenquelle</h2>' +
     '<span class="daki-methodik-chevron" aria-hidden="true">&#9662;</span>' +
     "</button>" +
-    '<div id="daki-methodik-body" class="collapse">' +
+    '<div id="daki-methodik-body-' + dakiUid + '" class="collapse">' +
     '<div class="daki-methodik-content">' +
     standHtml +
     hinweis +
@@ -124,13 +125,14 @@ async function fetchOdasJson(targetUrl, configdata = {}) {
 }
 
 async function app(configdata, enclosingHtmlDivElement) {
+  const dakiUid = "i" + ++dakiInstanzZaehler;
   const cfg = await Promise.resolve(configdata);
   enclosingHtmlDivElement.innerHTML = "";
   enclosingHtmlDivElement.style.maxWidth = "60%";
   enclosingHtmlDivElement.style.margin = "2rem auto";
 
   // Funktion-Auswahl-Menü
-  showFunctionSelectionMenu(enclosingHtmlDivElement, cfg);
+  showFunctionSelectionMenu(enclosingHtmlDivElement, cfg, dakiUid);
 }
 
 // Datensatzname aus Konfiguration extrahieren
@@ -165,7 +167,7 @@ function extractDatasetNameFromConfig(cfg) {
 }
 
 // Funktion-Auswahl-Menü
-function showFunctionSelectionMenu(container, cfg) {
+function showFunctionSelectionMenu(container, cfg, dakiUid) {
   // Datensatzname aus der Konfiguration extrahieren
   const datasetName = extractDatasetNameFromConfig(cfg);
 
@@ -203,7 +205,7 @@ function showFunctionSelectionMenu(container, cfg) {
   container.appendChild(contentContainer);
 
   // Methodikbox
-  const methodikHtml = renderMethodikbox(cfg);
+  const methodikHtml = renderMethodikbox(cfg, dakiUid);
   if (methodikHtml) {
     const methodikDiv = document.createElement("div");
     methodikDiv.innerHTML = methodikHtml;

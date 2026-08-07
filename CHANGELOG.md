@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.20.0 - 2026-08-07
+- FIX: Bootstrap-Ziele der Methodik-Box instanzeindeutig machen (F-32): `data-bs-target`, `aria-controls` und die Panel-ID tragen jetzt eine Instanzkennung (`-i1`, `-i2`, …); die uid wird am `app()`-Einstieg als lokale Konstante eingefroren und an den Render-Helfer durchgereicht — zwei App-Instanzen auf einer Seite kollidieren beim Auf- und Zuklappen der Methodik-Box nicht mehr, auch wenn sie gleichzeitig laden.
+
 ## 1.19.0 - 2026-08-07
 - FIX: Die drei Analyse-Lader übergeben `root` jetzt an `loadGeneralAnalysisContent`/`loadComparisonAnalysisContent`/`loadSearchAnalysisContent` (F-25-Regression aus Tranche 3, beim Browsernachweis gefunden): `fd5fe83` hatte die Signaturen um den `root`-Parameter erweitert, die Aufrufe in `showGeneralAnalysis`/`showComparisonAnalysis`/`showSearchAnalysis` aber nicht mitgezogen — dadurch warf `setup…AnalysisEvents` mit `root.querySelector` einen TypeError und keine der drei Analysen öffnete ihre Bedienelemente.
 
