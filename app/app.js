@@ -352,18 +352,23 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
   const baseUrl = cfg.apiurl
     .replace(/\/api\/3\/action\/package_show.*$/i, "")
     .replace(/\/$/, "");
+  const datasetUrl = safeHttpUrl(
+    baseUrl + "/dataset/" + encodeURIComponent(pkg.name),
+  );
+  const datasetTitle = escapeHtml(pkg.title);
+  const datasetLink = datasetUrl
+    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
+    : datasetTitle;
 
   container.innerHTML = `
     <div class="dataset-info mb-3">
       <h6>
         <i class="fas fa-database me-2"></i>
-        Datensatz: <a href="${baseUrl}/dataset/${encodeURIComponent(
-    pkg.name
-  )}" target="_blank">${escapeHtml(pkg.title)}</a>
+        Datensatz: ${datasetLink}
       </h6>
-      <p class="text-muted">${
-        cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
-      }</p>
+      <p class="text-muted">${escapeHtml(
+        cfg.datenbeschreibung || "Keine Beschreibung vorhanden.",
+      )}</p>
     </div>
     <div id="daki-datenstand-wrap"></div>
   `;
@@ -587,6 +592,13 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
   const baseUrl = cfg.apiurl
     .replace(/\/api\/3\/action\/package_show.*$/i, "")
     .replace(/\/$/, "");
+  const datasetUrl = safeHttpUrl(
+    baseUrl + "/dataset/" + encodeURIComponent(dataset1.name),
+  );
+  const datasetTitle = escapeHtml(dataset1.title);
+  const datasetLink = datasetUrl
+    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
+    : datasetTitle;
 
   container.innerHTML = `
     <div class="comparison-grid">
@@ -596,13 +608,11 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
           <div class="card">
             <div class="card-body">
               <h6 class="card-title">
-                <a href="${baseUrl}/dataset/${encodeURIComponent(
-    dataset1.name
-  )}" target="_blank">${escapeHtml(dataset1.title)}</a>
+                ${datasetLink}
               </h6>
-              <p class="card-text text-muted">${
-                cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
-              }</p>
+              <p class="card-text text-muted">${escapeHtml(
+                cfg.datenbeschreibung || "Keine Beschreibung vorhanden.",
+              )}</p>
             </div>
           </div>
         </div>
@@ -825,18 +835,23 @@ async function loadSearchAnalysisContent(container, cfg, root) {
   const baseUrl = cfg.apiurl
     .replace(/\/api\/3\/action\/package_show.*$/i, "")
     .replace(/\/$/, "");
+  const datasetUrl = safeHttpUrl(
+    baseUrl + "/dataset/" + encodeURIComponent(pkg.name),
+  );
+  const datasetTitle = escapeHtml(pkg.title);
+  const datasetLink = datasetUrl
+    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
+    : datasetTitle;
 
   container.innerHTML = `
     <div class="dataset-info mb-3">
       <h6>
         <i class="fas fa-database me-2"></i>
-        Datensatz: <a href="${baseUrl}/dataset/${encodeURIComponent(
-    pkg.name
-  )}" target="_blank">${escapeHtml(pkg.title)}</a>
+        Datensatz: ${datasetLink}
       </h6>
-      <p class="text-muted">${
-        cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
-      }</p>
+      <p class="text-muted">${escapeHtml(
+        cfg.datenbeschreibung || "Keine Beschreibung vorhanden.",
+      )}</p>
     </div>
   `;
 

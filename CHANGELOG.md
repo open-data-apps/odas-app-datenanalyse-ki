@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.22.0 - 2026-08-11
+- FIX: Konfigurierbare Datenbeschreibung wird in allen drei Analyseansichten HTML-escaped; der aus `apiurl` abgeleitete Dataset-Link wird nur bei gültigem HTTP(S)-Schema gerendert (F-35-Nachtrag)
+
 ## 1.21.0 - 2026-08-11
 - FIX: XSS- und URL-Vertrag geschlossen (F-35): `safeHttpUrl` als Top-Level-Helfer ergänzt; alle untrusted→HTML-Sinks auf `escapeHtml` umgestellt — Fehlermeldungen (`err.message`), Datensatztitel, Ressourcennamen in `<option>`, Ressourcenbeschreibungen, KI-Ergebnisse (`aiData.result`; nur Escaping, keine Formatierung) und Suchbegriffe (`query`)
 
