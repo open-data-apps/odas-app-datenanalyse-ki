@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.23.0 - 2026-08-11
+- FIX: Ladeanimation aus dem Geschwister-Assetverzeichnis laden: die sechs Lottie-Player nutzen jetzt `appAssetUrl("assets/loading.json")` statt `${getOdasAppBasePath()}/assets/loading.json` — letzteres zeigte in der ODAS-Live-Auslieferung auf `/app/assets/loading.json` und erzeugte einen 404, weil `assets/` Geschwister von `app/` ist (Review-Restfix)
+
 ## 1.22.0 - 2026-08-11
 - FIX: Konfigurierbare Datenbeschreibung wird in allen drei Analyseansichten HTML-escaped; der aus `apiurl` abgeleitete Dataset-Link wird nur bei gültigem HTTP(S)-Schema gerendert (F-35-Nachtrag)
 

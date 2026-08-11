@@ -16,6 +16,22 @@ function safeHttpUrl(value) {
   return /^https?:\/\//i.test(s) ? s : "";
 }
 
+function appAssetUrl(relativePath) {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+
+  let pathname = url.pathname;
+  if (!pathname.endsWith("/")) {
+    pathname = pathname.substring(0, pathname.lastIndexOf("/") + 1);
+  }
+  if (pathname.endsWith("/app/")) {
+    pathname = pathname.slice(0, -4);
+  }
+
+  return url.origin + pathname + relativePath.replace(/^\/+/, "");
+}
+
 function renderWeitereInfos(configdata) {
   const links = String(configdata.weiterfuehrendeLinks || "").trim();
   if (!links) return "";
@@ -304,7 +320,7 @@ async function showGeneralAnalysis(container, cfg, root) {
         <div id="daki-general-analysis-content">
           <div class="loading-container">
             <lottie-player
-              src="${getOdasAppBasePath()}/assets/loading.json"
+              src="${appAssetUrl("assets/loading.json")}"
               background="transparent"
               speed="1"
               style="width: 150px; height: 150px;"
@@ -480,7 +496,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root) {
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
-          src="${getOdasAppBasePath()}/assets/loading.json"
+          src="${appAssetUrl("assets/loading.json")}"
           background="transparent"
           speed="1"
           style="width: 150px; height: 150px;"
@@ -541,7 +557,7 @@ async function showComparisonAnalysis(container, cfg, root) {
         <div id="daki-comparison-analysis-content">
           <div class="loading-container">
             <lottie-player
-              src="${getOdasAppBasePath()}/assets/loading.json"
+              src="${appAssetUrl("assets/loading.json")}"
               background="transparent"
               speed="1"
               style="width: 150px; height: 150px;"
@@ -718,7 +734,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root) {
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
-          src="${getOdasAppBasePath()}/assets/loading.json"
+          src="${appAssetUrl("assets/loading.json")}"
           background="transparent"
           speed="1"
           style="width: 150px; height: 150px;"
@@ -787,7 +803,7 @@ async function showSearchAnalysis(container, cfg, root) {
         <div id="daki-search-analysis-content">
           <div class="loading-container">
             <lottie-player
-              src="${getOdasAppBasePath()}/assets/loading.json"
+              src="${appAssetUrl("assets/loading.json")}"
               background="transparent"
               speed="1"
               style="width: 150px; height: 150px;"
@@ -957,7 +973,7 @@ function setupSearchAnalysisEvents(pkg, cfg, root) {
     resultDiv.innerHTML = `
       <div class="loading-container">
         <lottie-player
-          src="${getOdasAppBasePath()}/assets/loading.json"
+          src="${appAssetUrl("assets/loading.json")}"
           background="transparent"
           speed="1"
           style="width: 150px; height: 150px;"
