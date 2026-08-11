@@ -578,7 +578,7 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
     container.innerHTML = `
       <div class="alert alert-danger">
         <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden der Daten:<br><code>${escapeHtml(err.message)}</code>
+        Fehler beim Laden des ersten Datensatzes:<br><code>${escapeHtml(err.message)}</code>
       </div>`;
     return;
   }
