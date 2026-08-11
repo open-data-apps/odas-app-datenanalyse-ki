@@ -11,6 +11,11 @@ function escapeHtml(str) {
     .replace(/'/g, "&#39;");
 }
 
+function safeHttpUrl(value) {
+  const s = String(value || "").trim();
+  return /^https?:\/\//i.test(s) ? s : "";
+}
+
 function renderWeitereInfos(configdata) {
   const links = String(configdata.weiterfuehrendeLinks || "").trim();
   if (!links) return "";
@@ -338,7 +343,7 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
     container.innerHTML = `
       <div class="alert alert-danger">
         <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden der Daten:<br><code>${err.message}</code>
+        Fehler beim Laden der Daten:<br><code>${escapeHtml(err.message)}</code>
       </div>`;
     return;
   }
@@ -354,7 +359,7 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
         <i class="fas fa-database me-2"></i>
         Datensatz: <a href="${baseUrl}/dataset/${encodeURIComponent(
     pkg.name
-  )}" target="_blank">${pkg.title}</a>
+  )}" target="_blank">${escapeHtml(pkg.title)}</a>
       </h6>
       <p class="text-muted">${
         cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
@@ -395,9 +400,9 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
         ${pkg.resources
           .map(
             (r, idx) =>
-              `<option value="${idx}">${
+              `<option value="${idx}">${escapeHtml(
                 r.name || r.title || r.id || "Ressource " + (idx + 1)
-              }</option>`
+              )}</option>`
           )
           .join("")}
       </select>
@@ -446,9 +451,9 @@ function setupGeneralAnalysisEvents(pkg, cfg, root) {
 
     resourceDesc.innerHTML =
       resource.description || resource.notes
-        ? `<strong>Beschreibung:</strong> ${
+        ? `<strong>Beschreibung:</strong> ${escapeHtml(
             resource.description || resource.notes
-          }`
+          )}`
         : `<em>Keine Beschreibung zur Ressource vorhanden.</em>`;
   }
 
@@ -504,7 +509,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root) {
             <i class="fas fa-chart-line me-2" style="color: #007bff;"></i>
             Analyseergebnis
           </h5>
-          <div class="card-text analysis-result mb-3">${aiData.result}</div>
+          <div class="card-text analysis-result mb-3">${escapeHtml(aiData.result)}</div>
           <div class="ai-credit">
             <i class="fas fa-robot me-2"></i>
             Die Analyse wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank">Google Gemini</a> durchgeführt.
@@ -573,7 +578,7 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
     container.innerHTML = `
       <div class="alert alert-danger">
         <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden des ersten Datensatzes:<br><code>${err.message}</code>
+        Fehler beim Laden der Daten:<br><code>${escapeHtml(err.message)}</code>
       </div>`;
     return;
   }
@@ -593,7 +598,7 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
               <h6 class="card-title">
                 <a href="${baseUrl}/dataset/${encodeURIComponent(
     dataset1.name
-  )}" target="_blank">${dataset1.title}</a>
+  )}" target="_blank">${escapeHtml(dataset1.title)}</a>
               </h6>
               <p class="card-text text-muted">${
                 cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
@@ -608,9 +613,9 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
           ${dataset1.resources
             .map(
               (r, idx) =>
-                `<option value="${idx}">${
+                `<option value="${idx}">${escapeHtml(
                   r.name || r.title || r.id || "Ressource " + (idx + 1)
-                }</option>`
+                )}</option>`
             )
             .join("")}
         </select>
@@ -658,9 +663,9 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root) {
 
     resourceDesc1.innerHTML =
       resource.description || resource.notes
-        ? `<strong>Beschreibung:</strong> ${
+        ? `<strong>Beschreibung:</strong> ${escapeHtml(
             resource.description || resource.notes
-          }`
+          )}`
         : `<em>Keine Beschreibung zur Ressource vorhanden.</em>`;
   }
 
@@ -736,7 +741,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root) {
             <i class="fas fa-chart-line me-2" style="color: #28a745;"></i>
             Vergleichsanalyse-Ergebnis
           </h5>
-          <div class="card-text analysis-result mb-3">${aiData.result}</div>
+          <div class="card-text analysis-result mb-3">${escapeHtml(aiData.result)}</div>
           <div class="ai-credit">
             <i class="fas fa-robot me-2"></i>
             Die Vergleichsanalyse wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank">Google Gemini</a> durchgeführt.
@@ -811,7 +816,7 @@ async function loadSearchAnalysisContent(container, cfg, root) {
     container.innerHTML = `
       <div class="alert alert-danger">
         <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden der Daten:<br><code>${err.message}</code>
+        Fehler beim Laden der Daten:<br><code>${escapeHtml(err.message)}</code>
       </div>`;
     return;
   }
@@ -827,7 +832,7 @@ async function loadSearchAnalysisContent(container, cfg, root) {
         <i class="fas fa-database me-2"></i>
         Datensatz: <a href="${baseUrl}/dataset/${encodeURIComponent(
     pkg.name
-  )}" target="_blank">${pkg.title}</a>
+  )}" target="_blank">${escapeHtml(pkg.title)}</a>
       </h6>
       <p class="text-muted">${
         cfg.datenbeschreibung || "Keine Beschreibung vorhanden."
@@ -858,9 +863,9 @@ async function loadSearchAnalysisContent(container, cfg, root) {
         ${pkg.resources
           .map(
             (r, idx) =>
-              `<option value="${idx}">${
+              `<option value="${idx}">${escapeHtml(
                 r.name || r.title || r.id || "Ressource " + (idx + 1)
-              }</option>`
+              )}</option>`
           )
           .join("")}
       </select>
@@ -910,9 +915,9 @@ function setupSearchAnalysisEvents(pkg, cfg, root) {
 
     resourceDesc.innerHTML =
       resource.description || resource.notes
-        ? `<strong>Beschreibung:</strong> ${
+        ? `<strong>Beschreibung:</strong> ${escapeHtml(
             resource.description || resource.notes
-          }`
+          )}`
         : `<em>Keine Beschreibung zur Ressource vorhanden.</em>`;
   }
 
@@ -946,7 +951,7 @@ function setupSearchAnalysisEvents(pkg, cfg, root) {
         <h5 class="mt-3">KI-Suche läuft...</h5>
         <p class="text-muted">Die KI durchsucht den Datensatz nach Ihren Kriterien.</p>
         <div class="alert alert-info mt-3">
-          <strong>Suchbegriff:</strong> "${query}"
+          <strong>Suchbegriff:</strong> "${escapeHtml(query)}"
         </div>
       </div>
     `;
@@ -969,9 +974,9 @@ function setupSearchAnalysisEvents(pkg, cfg, root) {
             Suchergebnis
           </h5>
           <div class="alert alert-light border">
-            <strong><i class="fas fa-quote-left me-2"></i>Ihre Suchanfrage:</strong> "${query}"
+            <strong><i class="fas fa-quote-left me-2"></i>Ihre Suchanfrage:</strong> "${escapeHtml(query)}"
           </div>
-          <div class="card-text analysis-result mb-3">${aiData.result}</div>
+          <div class="card-text analysis-result mb-3">${escapeHtml(aiData.result)}</div>
           <div class="ai-credit">
             <i class="fas fa-robot me-2"></i>
             Die Suche wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank">Google Gemini</a> durchgeführt.
@@ -1013,9 +1018,9 @@ function populateResourceSelect(selectId, resources, root) {
   select.innerHTML = resources
     .map(
       (r, idx) =>
-        `<option value="${idx}">${
+        `<option value="${idx}">${escapeHtml(
           r.name || r.title || r.id || "Ressource " + (idx + 1)
-        }</option>`
+        )}</option>`
     )
     .join("");
   select.disabled = false;

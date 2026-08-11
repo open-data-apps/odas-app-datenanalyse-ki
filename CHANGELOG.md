@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.21.0 - 2026-08-11
+- FIX: XSS- und URL-Vertrag geschlossen (F-35): `safeHttpUrl` als Top-Level-Helfer ergänzt; alle untrusted→HTML-Sinks auf `escapeHtml` umgestellt — Fehlermeldungen (`err.message`), Datensatztitel, Ressourcennamen in `<option>`, Ressourcenbeschreibungen, KI-Ergebnisse (`aiData.result`; nur Escaping, keine Formatierung) und Suchbegriffe (`query`)
+
 ## 1.20.0 - 2026-08-07
 - FIX: Bootstrap-Ziele der Methodik-Box instanzeindeutig machen (F-32): `data-bs-target`, `aria-controls` und die Panel-ID tragen jetzt eine Instanzkennung (`-i1`, `-i2`, …); die uid wird am `app()`-Einstieg als lokale Konstante eingefroren und an den Render-Helfer durchgereicht — zwei App-Instanzen auf einer Seite kollidieren beim Auf- und Zuklappen der Methodik-Box nicht mehr, auch wenn sie gleichzeitig laden.
 
