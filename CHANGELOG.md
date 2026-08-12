@@ -1,6 +1,10 @@
 # Changelog
 
 
+## 1.26.0 - 2026-08-12
+- FIX: HTML-Escaping der Datensatznamen von der Quellfunktion an die sechs innerHTML-Sinks verlagert — die Absicherung ist jetzt an der Fundstelle sichtbar und vom herkunftsbasierten Sink-Check prüfbar (F-52b)
+
+
 ## 1.25.0 - 2026-08-12
 - FIX: `app/index.html` auf den Template-Stand (F-47): Datei byte-gleich aus `oda-generic` übernommen — gültiges HTML, deutsche ARIA-Labels, Footer im Body; Titel und Fußzeile bleiben Platzhalter und werden zur Laufzeit aus der Instanz-Config überschrieben
 

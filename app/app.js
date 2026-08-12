@@ -163,11 +163,11 @@ function extractDatasetNameFromConfig(cfg) {
       // Extrahiere Dataset-ID aus der API-URL
       const match = cfg.apiurl.match(/[?&]id=([^&]+)/);
       if (match && match[1]) {
-        // Konvertiere Dataset-ID zu lesbarem Namen. escapeHtml, weil der
-        // Rueckgabewert ausschliesslich in innerHTML-Sinks landet (F-49).
-        return escapeHtml(
-          match[1].replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-        );
+        // Konvertiere Dataset-ID zu lesbarem Namen. Das Escaping erfolgt an den
+        // Sinks, nicht hier — nur so ist die Absicherung lokal pruefbar (F-52b).
+        return match[1]
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
       }
     }
 
@@ -175,10 +175,10 @@ function extractDatasetNameFromConfig(cfg) {
       // Extrahiere Dataset-Name aus der Dataset-URL
       const match = cfg.urlDaten.match(/\/dataset\/([^/?]+)/);
       if (match && match[1]) {
-        // escapeHtml: siehe oben (F-49)
-        return escapeHtml(
-          match[1].replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-        );
+        // Escaping an den Sinks, siehe oben (F-52b)
+        return match[1]
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
       }
     }
 
@@ -199,24 +199,24 @@ function showFunctionSelectionMenu(container, cfg, dakiUid) {
   menuCard.innerHTML = `
     <div class="card-body">
       <h5 class="card-title">
-        KI-Analysefunktionen für ${datasetName}
+        KI-Analysefunktionen für ${escapeHtml(datasetName)}
       </h5>
-      <p class="card-text text-muted">Wählen Sie die gewünschte Analysefunktion für ${datasetName}:</p>
+      <p class="card-text text-muted">Wählen Sie die gewünschte Analysefunktion für ${escapeHtml(datasetName)}:</p>
       <div class="d-grid gap-3 function-buttons">
         <button id="daki-general-analysis-btn" class="btn btn-primary">
           <i class="fas fa-chart-bar feature-icon"></i>
           <strong>Allgemeine Datensatzanalyse</strong>
-          <br><small class="text-white-50">Umfassende KI-Analyse des Datensatzes: ${datasetName}</small>
+          <br><small class="text-white-50">Umfassende KI-Analyse des Datensatzes: ${escapeHtml(datasetName)}</small>
         </button>
         <button id="daki-comparison-analysis-btn" class="btn btn-success">
           <i class="fas fa-balance-scale feature-icon"></i>
           <strong>Datensatzvergleichsanalyse</strong>
-          <br><small class="text-white-50">Vergleiche ${datasetName} auf Gemeinsamkeiten und Unterschiede mit einem zweiten Datensatz</small>
+          <br><small class="text-white-50">Vergleiche ${escapeHtml(datasetName)} auf Gemeinsamkeiten und Unterschiede mit einem zweiten Datensatz</small>
         </button>
         <button id="daki-search-analysis-btn" class="btn btn-info">
           <i class="fas fa-search feature-icon"></i>
           <strong>Datensatzsuche</strong>
-          <br><small class="text-white-50">Gezielte Suche nach spezifischen Informationen im Datensatz: ${datasetName}</small>
+          <br><small class="text-white-50">Gezielte Suche nach spezifischen Informationen im Datensatz: ${escapeHtml(datasetName)}</small>
         </button>
       </div>
     </div>`;
@@ -314,7 +314,7 @@ async function showGeneralAnalysis(container, cfg, root) {
           <i class="fas fa-chart-bar me-2" style="color: #007bff;"></i>
           ${
             datasetName
-              ? `Analyse des Datensatzes: ${datasetName}`
+              ? `Analyse des Datensatzes: ${escapeHtml(datasetName)}`
               : "Allgemeine Datensatzanalyse"
           }
         </h5>
