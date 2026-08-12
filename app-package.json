@@ -44,6 +44,7 @@
   "instanz-config": {
     "seitentitel": {
       "label": "Seitentitel",
+      "category": "general",
       "hilfe": "Der Seitentitel wird im Browser-Tab der App angezeigt",
       "default": "KI-Analyse ODA",
       "format": {
@@ -54,6 +55,7 @@
     },
     "titel": {
       "label": "Titel",
+      "category": "general",
       "hilfe": "Der Titel wird in der Titelzeile der App angezeigt",
       "default": "KI-Analyse Open Data App",
       "format": {
@@ -64,6 +66,7 @@
     },
     "datenbeschreibung": {
       "label": "Daten-Beschreibung",
+      "category": "content",
       "hilfe": "Die Beschreibung wird passend zu den Daten angezeigt",
       "default": "Hier ist die Beschreibung für die Daten.",
       "format": {
@@ -74,6 +77,7 @@
     },
     "icon": {
       "label": "App-Icon",
+      "category": "general",
       "hilfe": "Das Icon wird links oben in der Titelzeile angezeigt",
       "default": "{{{odp.logo}}}",
       "format": {
@@ -85,6 +89,7 @@
     },
     "kontakt": {
       "label": "Kontakt",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Kontakt' anzeigt",
       "format": {
         "typ": "markdown"
@@ -101,6 +106,7 @@
     },
     "beschreibung": {
       "label": "Beschreibung",
+      "category": "content",
       "hilfe": "Der Text wird im Menüpunkt 'Über diese App' anzeigt",
       "format": {
         "typ": "markdown"
@@ -126,6 +132,7 @@
     },
     "impressum": {
       "label": "Impressum",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Impressum' anzeigt",
       "format": {
         "typ": "markdown"
@@ -145,6 +152,7 @@
     },
     "datenschutz": {
       "label": "Datenschutz",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Datenschutz' anzeigt",
       "format": {
         "typ": "markdown"
@@ -159,6 +167,7 @@
     },
     "datenStand": {
       "label": "Datenstand",
+      "category": "content",
       "hilfe": "Freitext-Datum, z.B. 'Stand: Januar 2025'. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -169,6 +178,7 @@
     },
     "datenquelleHinweis": {
       "label": "Methodik / Datenquelle-Hinweis",
+      "category": "content",
       "hilfe": "Herkunft, Erhebungsmethode, Limitierungen (Markdown/HTML). Leer = ausgeblendet.",
       "format": {
         "typ": "markdown"
@@ -178,6 +188,7 @@
     },
     "weiterfuehrendeLinks": {
       "label": "Weiterführende Links",
+      "category": "content",
       "hilfe": "Verwandte Datensätze / Hintergrundquellen (Markdown/HTML). Leer = ausgeblendet.",
       "format": {
         "typ": "markdown"
@@ -187,6 +198,7 @@
     },
     "urlDaten": {
       "label": "URL zum Datensatz im ODP",
+      "category": "datasource",
       "hilfe": "Der Datensatz im Open Data Portal mit den Daten der KI-Analyse App",
       "format": {
         "typ": "url"
@@ -197,6 +209,7 @@
     },
     "fusszeile": {
       "label": "Fußzeile",
+      "category": "contact-legal",
       "hilfe": "Wird auf der Website unten in der Fusszeile angezeigt.",
       "format": {
         "typ": "string",
@@ -207,6 +220,7 @@
     },
     "proxyAktiv": {
       "label": "ODAS-Proxy aktivieren",
+      "category": "datasource",
       "hilfe": "Mit ja werden Datenabrufe über den ODAS-Proxy gesendet. Der Proxy ist nur im ODAS-Live-System verfügbar; Entwicklung und Standalone verwenden nein.",
       "default": "nein",
       "format": {
@@ -220,6 +234,7 @@
     },
     "apiurl": {
       "label": "URL zu den Daten",
+      "category": "datasource",
       "hilfe": "Von dieser URL zum Datensatz werden die Ressoucen bezogen (Beispiel: https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen).",
       "format": {
         "typ": "url",
@@ -231,6 +246,7 @@
     },
     "sprache": {
       "label": "Sprache der App",
+      "category": "general",
       "hilfe": "Angabe der App-Sprache",
       "default": "de",
       "format": {
@@ -243,6 +259,7 @@
     },
     "brandingCSS": {
       "label": "Zusätzliches Branding-CSS",
+      "category": "advanced",
       "hilfe": "Optionaler CSS-Code für die konkrete App-Instanz.",
       "default": "",
       "format": {
@@ -253,6 +270,7 @@
     },
     "brandingCSSFile": {
       "label": "Branding-CSS-Datei",
+      "category": "advanced",
       "hilfe": "Optionale URL zu einer zusätzlichen CSS-Datei für die konkrete App-Instanz.",
       "default": "",
       "format": {
