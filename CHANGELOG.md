@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.24.0 - 2026-08-12
+- FIX: Aus `apiurl`/`urlDaten` abgeleitete Datensatznamen werden HTML-escaped, bevor sie in innerHTML-Sinks landen (F-49)
+
 ## 1.23.0 - 2026-08-11
 - FIX: Ladeanimation aus dem Geschwister-Assetverzeichnis laden: die sechs Lottie-Player nutzen jetzt `appAssetUrl("assets/loading.json")` statt `${getOdasAppBasePath()}/assets/loading.json` — letzteres zeigte in der ODAS-Live-Auslieferung auf `/app/assets/loading.json` und erzeugte einen 404, weil `assets/` Geschwister von `app/` ist (Review-Restfix)
 

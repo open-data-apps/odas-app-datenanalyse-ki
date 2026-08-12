@@ -163,10 +163,11 @@ function extractDatasetNameFromConfig(cfg) {
       // Extrahiere Dataset-ID aus der API-URL
       const match = cfg.apiurl.match(/[?&]id=([^&]+)/);
       if (match && match[1]) {
-        // Konvertiere Dataset-ID zu lesbarem Namen
-        return match[1]
-          .replace(/_/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase());
+        // Konvertiere Dataset-ID zu lesbarem Namen. escapeHtml, weil der
+        // Rueckgabewert ausschliesslich in innerHTML-Sinks landet (F-49).
+        return escapeHtml(
+          match[1].replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+        );
       }
     }
 
@@ -174,9 +175,10 @@ function extractDatasetNameFromConfig(cfg) {
       // Extrahiere Dataset-Name aus der Dataset-URL
       const match = cfg.urlDaten.match(/\/dataset\/([^/?]+)/);
       if (match && match[1]) {
-        return match[1]
-          .replace(/_/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase());
+        // escapeHtml: siehe oben (F-49)
+        return escapeHtml(
+          match[1].replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+        );
       }
     }
 
