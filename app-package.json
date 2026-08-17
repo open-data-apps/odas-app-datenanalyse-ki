@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "version": "1.28.0",
+  "version": "1.29.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Diese App bringt Künstliche Intelligenz ins Open Data Portal! Mit wenigen Klicks können Datensätze automatisch analysiert werden.",
@@ -235,7 +235,7 @@
     "apiurl": {
       "label": "URL zu den Daten",
       "category": "datenherkunft",
-      "hilfe": "Von dieser URL zum Datensatz werden die Ressoucen bezogen (Beispiel: https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen).",
+      "hilfe": "Direkter, maschinenlesbarer Endpunkt, von dem die App die Ressourcen lädt — nicht die Datensatzseite im ODP (siehe „URL zum Datensatz im ODP\"). Beispiel: https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen.",
       "format": {
         "typ": "url",
         "laenge": 255
