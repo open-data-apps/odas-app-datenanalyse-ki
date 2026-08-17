@@ -1,5 +1,4 @@
 let dakiInstanzZaehler = 0;
-let dakiDatenStand = null;
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return "";
@@ -248,21 +247,21 @@ function showFunctionSelectionMenu(container, cfg, dakiUid) {
     .querySelector("#daki-general-analysis-btn")
     .addEventListener("click", () => {
       minimizeSelectionMenu(menuCard);
-      showGeneralAnalysis(contentContainer, cfg, container);
+      showGeneralAnalysis(contentContainer, cfg, container, dakiUid);
     });
 
   container
     .querySelector("#daki-comparison-analysis-btn")
     .addEventListener("click", () => {
       minimizeSelectionMenu(menuCard);
-      showComparisonAnalysis(contentContainer, cfg, container);
+      showComparisonAnalysis(contentContainer, cfg, container, dakiUid);
     });
 
   container
     .querySelector("#daki-search-analysis-btn")
     .addEventListener("click", () => {
       minimizeSelectionMenu(menuCard);
-      showSearchAnalysis(contentContainer, cfg, container);
+      showSearchAnalysis(contentContainer, cfg, container, dakiUid);
     });
 }
 
@@ -299,7 +298,7 @@ function addBackButtonIfNeeded(container, root) {
 }
 
 // Allgemeine Datensatzanalyse (ursprüngliche Funktion)
-async function showGeneralAnalysis(container, cfg, root) {
+async function showGeneralAnalysis(container, cfg, root, uid) {
   // Zurück-Button hinzufügen wenn noch nicht vorhanden
   addBackButtonIfNeeded(container, root);
 
@@ -339,11 +338,12 @@ async function showGeneralAnalysis(container, cfg, root) {
   container.appendChild(functionContent);
 
   const contentDiv = container.querySelector("#daki-general-analysis-content");
-  await loadGeneralAnalysisContent(contentDiv, cfg, root);
+  await loadGeneralAnalysisContent(contentDiv, cfg, root, uid);
 }
 
-async function loadGeneralAnalysisContent(container, cfg, root) {
+async function loadGeneralAnalysisContent(container, cfg, root, uid) {
   let pkg;
+  let datenStand = null;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
     const json = await fetchOdasJson(cfg.apiurl, cfg);
@@ -353,7 +353,7 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
     if (json.result) {
       pkg = json.result;
       pkg.resources = Array.isArray(pkg.resources) ? pkg.resources : [];
-      dakiDatenStand = pkg.metadata_modified || null;
+      datenStand = pkg.metadata_modified || null;
     } else {
       throw new Error("Unbekanntes API-Format");
     }
@@ -392,8 +392,8 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
   `;
 
   // Schale 4: Datenfrische anzeigen
-  if (dakiDatenStand) {
-    const d = new Date(dakiDatenStand);
+  if (datenStand) {
+    const d = new Date(datenStand);
     if (!isNaN(d.getTime())) {
       const dsEl = container.querySelector("#daki-datenstand-wrap");
       if (dsEl) dsEl.innerHTML = '<div class="text-muted small mb-2">Datenstand: ' + escapeHtml(d.toLocaleDateString("de-DE")) + '</div>';
@@ -416,10 +416,10 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
 
   container.innerHTML += `
     <div class="mb-3">
-      <label for="daki-resource-select" class="form-label">
+      <label for="daki-resource-select-${uid}" class="form-label">
         <i class="fas fa-file-alt me-2"></i><strong>Ressource wählen:</strong>
       </label>
-      <select id="daki-resource-select" class="form-select">
+      <select id="daki-resource-select-${uid}" class="form-select">
         ${pkg.resources
           .map(
             (r, idx) =>
@@ -447,11 +447,11 @@ async function loadGeneralAnalysisContent(container, cfg, root) {
   `;
 
   // Event-Listener für Ressourcen-Auswahl und Analyse
-  setupGeneralAnalysisEvents(pkg, cfg, root);
+  setupGeneralAnalysisEvents(pkg, cfg, root, uid);
 }
 
-function setupGeneralAnalysisEvents(pkg, cfg, root) {
-  const selectEl = root.querySelector("#daki-resource-select");
+function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
+  const selectEl = root.querySelector(`#daki-resource-select-${uid}`);
   const resourceDesc = root.querySelector("#daki-resource-desc");
   const analyzeBtn = root.querySelector("#daki-analyze-btn");
   const analyzeInfo = root.querySelector("#daki-analyze-info");
@@ -543,7 +543,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root) {
 }
 
 // Datensatzvergleichsanalyse
-async function showComparisonAnalysis(container, cfg, root) {
+async function showComparisonAnalysis(container, cfg, root, uid) {
   // Zurück-Button hinzufügen wenn noch nicht vorhanden
   addBackButtonIfNeeded(container, root);
 
@@ -577,10 +577,10 @@ async function showComparisonAnalysis(container, cfg, root) {
   container.appendChild(functionContent);
 
   const contentDiv = container.querySelector("#daki-comparison-analysis-content");
-  await loadComparisonAnalysisContent(contentDiv, cfg, root);
+  await loadComparisonAnalysisContent(contentDiv, cfg, root, uid);
 }
 
-async function loadComparisonAnalysisContent(container, cfg, root) {
+async function loadComparisonAnalysisContent(container, cfg, root, uid) {
   let dataset1;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
@@ -634,10 +634,10 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
             </div>
           </div>
         </div>
-        <label for="daki-resource1-select" class="form-label">
+        <label for="daki-resource1-select-${uid}" class="form-label">
           <i class="fas fa-file-alt me-2"></i><strong>Ressource wählen:</strong>
         </label>
-        <select id="daki-resource1-select" class="form-select">
+        <select id="daki-resource1-select-${uid}" class="form-select">
           ${dataset1.resources
             .map(
               (r, idx) =>
@@ -676,13 +676,13 @@ async function loadComparisonAnalysisContent(container, cfg, root) {
   `;
 
   // Event-Listener für Vergleichsanalyse einrichten
-  setupComparisonAnalysisEvents(dataset1, cfg, root);
+  setupComparisonAnalysisEvents(dataset1, cfg, root, uid);
 }
 
-function setupComparisonAnalysisEvents(dataset1, cfg, root) {
+function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
   let dataset2 = null;
 
-  const selectEl1 = root.querySelector("#daki-resource1-select");
+  const selectEl1 = root.querySelector(`#daki-resource1-select-${uid}`);
   const resourceDesc1 = root.querySelector("#daki-resource1-desc");
 
   function updateResource1Info() {
@@ -789,7 +789,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root) {
 }
 
 // Datensatzsuche
-async function showSearchAnalysis(container, cfg, root) {
+async function showSearchAnalysis(container, cfg, root, uid) {
   // Zurück-Button hinzufügen wenn noch nicht vorhanden
   addBackButtonIfNeeded(container, root);
 
@@ -822,11 +822,12 @@ async function showSearchAnalysis(container, cfg, root) {
   container.appendChild(functionContent);
 
   const contentDiv = container.querySelector("#daki-search-analysis-content");
-  await loadSearchAnalysisContent(contentDiv, cfg, root);
+  await loadSearchAnalysisContent(contentDiv, cfg, root, uid);
 }
 
-async function loadSearchAnalysisContent(container, cfg, root) {
+async function loadSearchAnalysisContent(container, cfg, root, uid) {
   let pkg;
+  let datenStand = null;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
     const json = await fetchOdasJson(cfg.apiurl, cfg);
@@ -836,7 +837,7 @@ async function loadSearchAnalysisContent(container, cfg, root) {
     if (json.result) {
       pkg = json.result;
       pkg.resources = Array.isArray(pkg.resources) ? pkg.resources : [];
-      dakiDatenStand = pkg.metadata_modified || null;
+      datenStand = pkg.metadata_modified || null;
     } else {
       throw new Error("Unbekanntes API-Format");
     }
@@ -889,10 +890,10 @@ async function loadSearchAnalysisContent(container, cfg, root) {
 
   container.innerHTML += `
     <div class="mb-3">
-      <label for="daki-search-resource-select" class="form-label">
+      <label for="daki-search-resource-select-${uid}" class="form-label">
         <i class="fas fa-file-alt me-2"></i><strong>Ressource wählen:</strong>
       </label>
-      <select id="daki-search-resource-select" class="form-select">
+      <select id="daki-search-resource-select-${uid}" class="form-select">
         ${pkg.resources
           .map(
             (r, idx) =>
@@ -906,10 +907,10 @@ async function loadSearchAnalysisContent(container, cfg, root) {
     </div>
     
     <div class="mb-4">
-      <label for="daki-search-query" class="form-label">
+      <label for="daki-search-query-${uid}" class="form-label">
         <i class="fas fa-comment-dots me-2"></i><strong>Ihre Suchanfrage:</strong>
       </label>
-      <textarea id="daki-search-query" class="form-control" rows="3" placeholder="Beschreiben Sie in natürlicher Sprache, wonach Sie suchen..."></textarea>
+      <textarea id="daki-search-query-${uid}" class="form-control" rows="3" placeholder="Beschreiben Sie in natürlicher Sprache, wonach Sie suchen..."></textarea>
       <div class="form-text mt-2">
         <strong>Beispiele:</strong><br>
         • "Finde alle Einträge mit Temperaturwerten über 30°C"<br>
@@ -933,14 +934,14 @@ async function loadSearchAnalysisContent(container, cfg, root) {
   `;
 
   // Event-Listener für Ressourcen-Auswahl und Suche
-  setupSearchAnalysisEvents(pkg, cfg, root);
+  setupSearchAnalysisEvents(pkg, cfg, root, uid);
 }
 
-function setupSearchAnalysisEvents(pkg, cfg, root) {
-  const selectEl = root.querySelector("#daki-search-resource-select");
+function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
+  const selectEl = root.querySelector(`#daki-search-resource-select-${uid}`);
   const resourceDesc = root.querySelector("#daki-search-resource-desc");
   const searchBtn = root.querySelector("#daki-search-btn");
-  const searchQuery = root.querySelector("#daki-search-query");
+  const searchQuery = root.querySelector(`#daki-search-query-${uid}`);
 
   function updateResourceInfo() {
     const selectedIdx = parseInt(selectEl.value, 10);
