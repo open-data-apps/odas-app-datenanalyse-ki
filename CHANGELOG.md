@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 1.27.0 - 2026-08-17
+- **CHG:** `instanz-config`-`category`-Vokabular auf Deutsch umgestellt (`allgemein`, `beschreibung`, `datenherkunft`, `kontakt-rechtliches`, `sonstiges`); die entfallenen Kategorien `metrics` und `advanced` wurden auf `beschreibung` bzw. `sonstiges` verteilt
+
 ## 1.26.0 - 2026-08-12
 - FIX: HTML-Escaping der Datensatznamen von der Quellfunktion an die sechs innerHTML-Sinks verlagert — die Absicherung ist jetzt an der Fundstelle sichtbar und vom herkunftsbasierten Sink-Check prüfbar (F-52b)
 
