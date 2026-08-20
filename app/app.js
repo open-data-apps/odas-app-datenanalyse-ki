@@ -1,5 +1,9 @@
 let dakiInstanzZaehler = 0;
 
+// Client-seitiges Timeout für /ai-Aufrufe (F-79): verhindert unbegrenztes
+// Hängenbleiben im Ladezustand, falls das ODAS-Backend nicht antwortet.
+const AI_REQUEST_TIMEOUT_MS = 90000;
+
 function escapeHtml(str) {
   if (str === null || str === undefined) return "";
   return String(str)
@@ -13,6 +17,26 @@ function escapeHtml(str) {
 function safeHttpUrl(value) {
   const s = String(value || "").trim();
   return /^https?:\/\//i.test(s) ? s : "";
+}
+
+// Rendert einen KI-Fehler strukturell abweichend von der Erfolgs-Ergebniskarte
+// (F-88): kein Gemini-Credit-Hinweis, warnend gestaltet, mit Retry-Möglichkeit,
+// die dieselbe Analyse erneut anstößt (F-79).
+function renderAiErrorCard(resultDiv, message, onRetry) {
+  resultDiv.innerHTML = `
+    <div class="alert alert-danger" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      ${escapeHtml(message || "Bei der KI-Anfrage ist ein Fehler aufgetreten.")}
+      <div class="mt-2">
+        <button type="button" class="btn btn-sm btn-outline-danger daki-ai-retry-btn">
+          <i class="fas fa-redo me-1"></i>Erneut versuchen
+        </button>
+      </div>
+    </div>`;
+  const retryBtn = resultDiv.querySelector(".daki-ai-retry-btn");
+  if (retryBtn && typeof onRetry === "function") {
+    retryBtn.addEventListener("click", onRetry);
+  }
 }
 
 function appAssetUrl(relativePath) {
@@ -508,7 +532,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
   selectEl.addEventListener("change", updateResourceInfo);
   updateResourceInfo();
 
-  analyzeBtn.addEventListener("click", async () => {
+  async function runGeneralAnalysis() {
     const selectedIdx = parseInt(selectEl.value, 10);
     const resource = pkg.resources[selectedIdx];
     const resourceUrl =
@@ -541,12 +565,22 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
       pkg.notes || "",
       "general"
     );
+
+    if (aiData?.error) {
+      renderAiErrorCard(
+        resultDiv,
+        aiData.message || "Die KI konnte keine Analyse durchführen.",
+        runGeneralAnalysis
+      );
+      return;
+    }
+
     if (!aiData?.result) {
-      resultDiv.innerHTML = `
-        <div class="alert alert-danger">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          Die KI konnte keine Analyse durchführen.
-        </div>`;
+      renderAiErrorCard(
+        resultDiv,
+        "Die KI konnte keine Analyse durchführen.",
+        runGeneralAnalysis
+      );
       return;
     }
 
@@ -564,7 +598,9 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
           </div>
         </div>
       </div>`;
-  });
+  }
+
+  analyzeBtn.addEventListener("click", runGeneralAnalysis);
 }
 
 // Datensatzvergleichsanalyse
@@ -756,7 +792,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
       }
     });
 
-  root.querySelector("#daki-compare-btn").addEventListener("click", async () => {
+  async function runComparisonAnalysis() {
     const resource1Idx = parseInt(selectEl1.value, 10);
     const resource2Idx = parseInt(
       root.querySelector("#daki-resource2-select").value,
@@ -787,12 +823,22 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
       dataset1,
       dataset2
     );
+
+    if (aiData?.error) {
+      renderAiErrorCard(
+        resultDiv,
+        aiData.message || "Die KI konnte keine Vergleichsanalyse durchführen.",
+        runComparisonAnalysis
+      );
+      return;
+    }
+
     if (!aiData?.result) {
-      resultDiv.innerHTML = `
-        <div class="alert alert-danger">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          Die KI konnte keine Vergleichsanalyse durchführen.
-        </div>`;
+      renderAiErrorCard(
+        resultDiv,
+        "Die KI konnte keine Vergleichsanalyse durchführen.",
+        runComparisonAnalysis
+      );
       return;
     }
 
@@ -810,7 +856,11 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
           </div>
         </div>
       </div>`;
-  });
+  }
+
+  root
+    .querySelector("#daki-compare-btn")
+    .addEventListener("click", runComparisonAnalysis);
 
   function checkCompareButton() {
     const btn = root.querySelector("#daki-compare-btn");
@@ -999,7 +1049,7 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
   updateResourceInfo();
   checkSearchButton();
 
-  searchBtn.addEventListener("click", async () => {
+  async function runSearchAnalysis() {
     const selectedIdx = parseInt(selectEl.value, 10);
     const resource = pkg.resources[selectedIdx];
     const query = searchQuery.value.trim();
@@ -1025,12 +1075,22 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
     `;
 
     const aiData = await sendSearchToAI(resource, pkg, query);
+
+    if (aiData?.error) {
+      renderAiErrorCard(
+        resultDiv,
+        aiData.message || "Die KI konnte keine Suche durchführen.",
+        runSearchAnalysis
+      );
+      return;
+    }
+
     if (!aiData?.result) {
-      resultDiv.innerHTML = `
-        <div class="alert alert-danger">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          Die KI konnte keine Suche durchführen.
-        </div>`;
+      renderAiErrorCard(
+        resultDiv,
+        "Die KI konnte keine Suche durchführen.",
+        runSearchAnalysis
+      );
       return;
     }
 
@@ -1051,7 +1111,9 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
           </div>
         </div>
       </div>`;
-  });
+  }
+
+  searchBtn.addEventListener("click", runSearchAnalysis);
 }
 
 // Hilfsfunktionen
@@ -1094,6 +1156,47 @@ function populateResourceSelect(selectId, resources, root) {
   select.disabled = false;
 }
 
+// Führt den POST an den /ai-Endpunkt mit Timeout/Abort aus (F-79) und liefert
+// bei Fehlern eine strukturell unterscheidbare Form { error: true, message }
+// statt eines als Erfolg getarnten result-Strings (F-88).
+async function postAiRequest(body, errorLabel) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    AI_REQUEST_TIMEOUT_MS
+  );
+  try {
+    const aiUrl = `${getOdasAppBasePath()}/ai`;
+    const aiResp = await fetch(aiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    if (!aiResp.ok) {
+      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
+    }
+
+    return await aiResp.json();
+  } catch (err) {
+    if (err.name === "AbortError") {
+      console.error(`${errorLabel} (Zeitüberschreitung):`, err);
+      return {
+        error: true,
+        message:
+          "Zeitüberschreitung — die Analyse hat zu lange gedauert. Bitte erneut versuchen.",
+      };
+    }
+    console.error(`${errorLabel}:`, err);
+    return { error: true, message: `${errorLabel}: ${err.message}` };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 async function sendToAI(
   resourceUrl,
   resourceName,
@@ -1101,160 +1204,103 @@ async function sendToAI(
   datasetDesc,
   analysisType = "general"
 ) {
-  try {
-    const fileUrl = resourceUrl;
+  const fileUrl = resourceUrl;
 
-    let promptText;
-    if (analysisType === "general") {
-      promptText =
-        `Hier sind die Datenressourcen mit der Bezeichnung (${resourceName}):\n` +
-        `Zusätzlich liegt folgende Beschreibung des Datensatzes vor: "${datasetDesc}".\n\n` +
-        `Beginne die Analyse mit einer prägnanten Zusammenfassung des Inhalts und Formats der Daten. Beschreibe, welche Informationen in den Daten enthalten sind, wie sie strukturiert sind und in welchem Format sie vorliegen.\n\n` +
-        `Erstelle anschließend eine umfassende Analyse, indem du folgende Perspektiven integrierst:\n` +
-        `- Gib einen Überblick über die zentralen Muster und Trends innerhalb dieser Daten\n` +
-        `- Untersuche Auffälligkeiten oder Anomalien\n` +
-        `- Analysiere potenzielle Zusammenhänge und Korrelationen\n` +
-        `- Diskutiere gesellschaftliche, wirtschaftliche oder ökologische Kontexte\n` +
-        `- Ziehe Schlussfolgerungen für Entscheidungsträger\n` +
-        `- Beurteile Qualität und Vollständigkeit der Daten`;
-    }
-
-    const aiUrl = `${getOdasAppBasePath()}/ai`;
-    const aiResp = await fetch(aiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileUrl: fileUrl,
-        prompt: promptText,
-      }),
-    });
-
-    if (!aiResp.ok) {
-      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
-    }
-
-    const result = await aiResp.json();
-    return result;
-  } catch (err) {
-    console.error("Fehler beim KI-Aufruf:", err);
-    return { result: `Fehler beim KI-Aufruf: ${err.message}` };
+  let promptText;
+  if (analysisType === "general") {
+    promptText =
+      `Hier sind die Datenressourcen mit der Bezeichnung (${resourceName}):\n` +
+      `Zusätzlich liegt folgende Beschreibung des Datensatzes vor: "${datasetDesc}".\n\n` +
+      `Beginne die Analyse mit einer prägnanten Zusammenfassung des Inhalts und Formats der Daten. Beschreibe, welche Informationen in den Daten enthalten sind, wie sie strukturiert sind und in welchem Format sie vorliegen.\n\n` +
+      `Erstelle anschließend eine umfassende Analyse, indem du folgende Perspektiven integrierst:\n` +
+      `- Gib einen Überblick über die zentralen Muster und Trends innerhalb dieser Daten\n` +
+      `- Untersuche Auffälligkeiten oder Anomalien\n` +
+      `- Analysiere potenzielle Zusammenhänge und Korrelationen\n` +
+      `- Diskutiere gesellschaftliche, wirtschaftliche oder ökologische Kontexte\n` +
+      `- Ziehe Schlussfolgerungen für Entscheidungsträger\n` +
+      `- Beurteile Qualität und Vollständigkeit der Daten`;
   }
+
+  return postAiRequest(
+    { fileUrl: fileUrl, prompt: promptText },
+    "Fehler beim KI-Aufruf"
+  );
 }
 
 // Spezielle KI-Funktion für Datensatzvergleich
 async function sendComparisonToAI(resource1, resource2, dataset1, dataset2) {
-  try {
-    const resource1Url =
-      resource1.url || resource1.accessURL || resource1.downloadURL || "";
-    const resource2Url =
-      resource2.url || resource2.accessURL || resource2.downloadURL || "";
+  const resource1Url =
+    resource1.url || resource1.accessURL || resource1.downloadURL || "";
+  const resource2Url =
+    resource2.url || resource2.accessURL || resource2.downloadURL || "";
 
-    const resource1Name =
-      resource1.name || resource1.title || resource1.id || "Ressource 1";
-    const resource2Name =
-      resource2.name || resource2.title || resource2.id || "Ressource 2";
+  const resource1Name =
+    resource1.name || resource1.title || resource1.id || "Ressource 1";
+  const resource2Name =
+    resource2.name || resource2.title || resource2.id || "Ressource 2";
 
-    const promptText =
-      `Du sollst eine umfassende Vergleichsanalyse zwischen zwei Datensätzen durchführen. Analysiere beide Datensätze gründlich und erstelle eine detaillierte Vergleichsanalyse.\n\n` +
-      `ERSTER DATENSATZ:\n` +
-      `Titel: ${dataset1.title}\n` +
-      `Ressource: ${resource1Name}\n` +
-      `Beschreibung: ${dataset1.notes || "Keine Beschreibung verfügbar"}\n\n` +
-      `ZWEITER DATENSATZ:\n` +
-      `Titel: ${dataset2.title}\n` +
-      `Ressource: ${resource2Name}\n` +
-      `Beschreibung: ${dataset2.notes || "Keine Beschreibung verfügbar"}\n\n` +
-      `ANALYSEANFORDERUNGEN:\n` +
-      `1. STRUKTURELLER VERGLEICH: Vergleiche Format, Datentypen, Spaltenstrukturen und Datenorganisation beider Datensätze\n` +
-      `2. INHALTLICHE GEMEINSAMKEITEN: Identifiziere übereinstimmende Themenbereiche, ähnliche Datenpunkte und vergleichbare Kategorien\n` +
-      `3. WESENTLICHE UNTERSCHIEDE: Analysiere unterschiedliche Schwerpunkte, abweichende Metriken und verschiedene Perspektiven\n` +
-      `4. TRENDS UND MUSTER: Erkenne zeitliche Entwicklungen, wiederkehrende Muster und statistische Auffälligkeiten in beiden Datensätzen\n` +
-      `5. KORRELATIONSANALYSE: Untersuche mögliche Zusammenhänge zwischen den Datensätzen und identifiziere potenzielle Abhängigkeiten\n` +
-      `6. QUALITÄTSBEWERTUNG: Bewerte Vollständigkeit, Aktualität und Zuverlässigkeit beider Datensätze im Vergleich\n` +
-      `7. SYNTHESEERKENNTNISSE: Ziehe Schlussfolgerungen aus der Kombination beider Datensätze und identifiziere übergreifende Insights\n` +
-      `8. HANDLUNGSEMPFEHLUNGEN: Gib konkrete Empfehlungen für die kombinierte Nutzung oder weitere Analyseschritte\n\n` +
-      `Strukturiere deine Antwort klar und verwende HTML-Formatierung für bessere Lesbarkeit. Beginne mit einer Executive Summary der wichtigsten Erkenntnisse.`;
+  const promptText =
+    `Du sollst eine umfassende Vergleichsanalyse zwischen zwei Datensätzen durchführen. Analysiere beide Datensätze gründlich und erstelle eine detaillierte Vergleichsanalyse.\n\n` +
+    `ERSTER DATENSATZ:\n` +
+    `Titel: ${dataset1.title}\n` +
+    `Ressource: ${resource1Name}\n` +
+    `Beschreibung: ${dataset1.notes || "Keine Beschreibung verfügbar"}\n\n` +
+    `ZWEITER DATENSATZ:\n` +
+    `Titel: ${dataset2.title}\n` +
+    `Ressource: ${resource2Name}\n` +
+    `Beschreibung: ${dataset2.notes || "Keine Beschreibung verfügbar"}\n\n` +
+    `ANALYSEANFORDERUNGEN:\n` +
+    `1. STRUKTURELLER VERGLEICH: Vergleiche Format, Datentypen, Spaltenstrukturen und Datenorganisation beider Datensätze\n` +
+    `2. INHALTLICHE GEMEINSAMKEITEN: Identifiziere übereinstimmende Themenbereiche, ähnliche Datenpunkte und vergleichbare Kategorien\n` +
+    `3. WESENTLICHE UNTERSCHIEDE: Analysiere unterschiedliche Schwerpunkte, abweichende Metriken und verschiedene Perspektiven\n` +
+    `4. TRENDS UND MUSTER: Erkenne zeitliche Entwicklungen, wiederkehrende Muster und statistische Auffälligkeiten in beiden Datensätzen\n` +
+    `5. KORRELATIONSANALYSE: Untersuche mögliche Zusammenhänge zwischen den Datensätzen und identifiziere potenzielle Abhängigkeiten\n` +
+    `6. QUALITÄTSBEWERTUNG: Bewerte Vollständigkeit, Aktualität und Zuverlässigkeit beider Datensätze im Vergleich\n` +
+    `7. SYNTHESEERKENNTNISSE: Ziehe Schlussfolgerungen aus der Kombination beider Datensätze und identifiziere übergreifende Insights\n` +
+    `8. HANDLUNGSEMPFEHLUNGEN: Gib konkrete Empfehlungen für die kombinierte Nutzung oder weitere Analyseschritte\n\n` +
+    `Strukturiere deine Antwort klar und verwende HTML-Formatierung für bessere Lesbarkeit. Beginne mit einer Executive Summary der wichtigsten Erkenntnisse.`;
 
-    const aiUrl = `${getOdasAppBasePath()}/ai`;
-    const aiResp = await fetch(aiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileUrls: [resource1Url, resource2Url],
-        prompt: promptText,
-      }),
-    });
-
-    if (!aiResp.ok) {
-      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
-    }
-
-    const result = await aiResp.json();
-    return result;
-  } catch (err) {
-    console.error("Fehler beim KI-Vergleichsaufruf:", err);
-    return { result: `Fehler beim KI-Vergleichsaufruf: ${err.message}` };
-  }
+  return postAiRequest(
+    { fileUrls: [resource1Url, resource2Url], prompt: promptText },
+    "Fehler beim KI-Vergleichsaufruf"
+  );
 }
 
 // Spezielle KI-Funktion für Datensatzsuche
 async function sendSearchToAI(resource, dataset, searchQuery) {
-  try {
-    const resourceUrl =
-      resource.url || resource.accessURL || resource.downloadURL || "";
-    const resourceName =
-      resource.name || resource.title || resource.id || "Ressource";
+  const resourceUrl =
+    resource.url || resource.accessURL || resource.downloadURL || "";
+  const resourceName =
+    resource.name || resource.title || resource.id || "Ressource";
 
-    const promptText =
-      `Du bist ein KI-Assistent für die zielgerichtete Datensuche und -analyse. Deine Aufgabe ist es, in einem Datensatz gezielt nach spezifischen Informationen zu suchen.\n\n` +
-      `DATENSATZ-INFORMATIONEN:\n` +
-      `Titel: ${dataset.title}\n` +
-      `Ressource: ${resourceName}\n` +
-      `Beschreibung: ${dataset.notes || "Keine Beschreibung verfügbar"}\n\n` +
-      `SUCHANFRAGE DES NUTZERS:\n` +
-      `"${searchQuery}"\n\n` +
-      `ANALYSEANWEISUNG:\n` +
-      `1. DATENVERSTÄNDNIS: Analysiere zunächst die Struktur und den Inhalt des Datensatzes\n` +
-      `2. SUCHSTRATEGIE: Entwickle eine systematische Herangehensweise für die Suchanfrage\n` +
-      `3. GEZIELTE SUCHE: Suche präzise nach den vom Nutzer gewünschten Informationen\n` +
-      `4. ERGEBNISAUFBEREITUNG: Präsentiere die gefundenen Daten strukturiert und verständlich\n` +
-      `5. KONTEXT UND INTERPRETATION: Erkläre die Bedeutung der gefundenen Informationen\n` +
-      `6. ZUSÄTZLICHE ERKENNTNISSE: Weise auf verwandte oder interessante Nebenbefunde hin\n` +
-      `7. QUALITÄTSBEWERTUNG: Bewerte die Vollständigkeit und Zuverlässigkeit der Suchergebnisse\n\n` +
-      `AUSGABEFORMAT:\n` +
-      `- Beginne mit einer klaren Zusammenfassung der Suchergebnisse\n` +
-      `- Präsentiere konkrete Daten, Zahlen oder Beispiele aus dem Datensatz\n` +
-      `- Verwende HTML-Formatierung für bessere Struktur\n` +
-      `- Falls keine exakten Treffer gefunden werden, schlage alternative Suchansätze vor\n` +
-      `- Gib Hinweise für weiterführende Analysen\n\n` +
-      `Konzentriere dich ausschließlich auf die Beantwortung der spezifischen Suchanfrage und liefere präzise, verwertbare Ergebnisse.`;
+  const promptText =
+    `Du bist ein KI-Assistent für die zielgerichtete Datensuche und -analyse. Deine Aufgabe ist es, in einem Datensatz gezielt nach spezifischen Informationen zu suchen.\n\n` +
+    `DATENSATZ-INFORMATIONEN:\n` +
+    `Titel: ${dataset.title}\n` +
+    `Ressource: ${resourceName}\n` +
+    `Beschreibung: ${dataset.notes || "Keine Beschreibung verfügbar"}\n\n` +
+    `SUCHANFRAGE DES NUTZERS:\n` +
+    `"${searchQuery}"\n\n` +
+    `ANALYSEANWEISUNG:\n` +
+    `1. DATENVERSTÄNDNIS: Analysiere zunächst die Struktur und den Inhalt des Datensatzes\n` +
+    `2. SUCHSTRATEGIE: Entwickle eine systematische Herangehensweise für die Suchanfrage\n` +
+    `3. GEZIELTE SUCHE: Suche präzise nach den vom Nutzer gewünschten Informationen\n` +
+    `4. ERGEBNISAUFBEREITUNG: Präsentiere die gefundenen Daten strukturiert und verständlich\n` +
+    `5. KONTEXT UND INTERPRETATION: Erkläre die Bedeutung der gefundenen Informationen\n` +
+    `6. ZUSÄTZLICHE ERKENNTNISSE: Weise auf verwandte oder interessante Nebenbefunde hin\n` +
+    `7. QUALITÄTSBEWERTUNG: Bewerte die Vollständigkeit und Zuverlässigkeit der Suchergebnisse\n\n` +
+    `AUSGABEFORMAT:\n` +
+    `- Beginne mit einer klaren Zusammenfassung der Suchergebnisse\n` +
+    `- Präsentiere konkrete Daten, Zahlen oder Beispiele aus dem Datensatz\n` +
+    `- Verwende HTML-Formatierung für bessere Struktur\n` +
+    `- Falls keine exakten Treffer gefunden werden, schlage alternative Suchansätze vor\n` +
+    `- Gib Hinweise für weiterführende Analysen\n\n` +
+    `Konzentriere dich ausschließlich auf die Beantwortung der spezifischen Suchanfrage und liefere präzise, verwertbare Ergebnisse.`;
 
-    const aiUrl = `${getOdasAppBasePath()}/ai`;
-    const aiResp = await fetch(aiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileUrl: resourceUrl,
-        prompt: promptText,
-      }),
-    });
-
-    if (!aiResp.ok) {
-      throw new Error(`KI-Endpunkt antwortet mit Status ${aiResp.status}.`);
-    }
-
-    const result = await aiResp.json();
-    return result;
-  } catch (err) {
-    console.error("Fehler beim KI-Suchaufruf:", err);
-    return { result: `Fehler beim KI-Suchaufruf: ${err.message}` };
-  }
+  return postAiRequest(
+    { fileUrl: resourceUrl, prompt: promptText },
+    "Fehler beim KI-Suchaufruf"
+  );
 }
 
 function addToHead() {

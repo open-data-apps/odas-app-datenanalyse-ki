@@ -1,6 +1,10 @@
 # Changelog
 
 
+## 1.30.0 - 2026-08-20
+- FIX: KI-Anfragen (`sendToAI`/`sendComparisonToAI`/`sendSearchToAI`) hatten keinen Timeout/Abort — bei hängendem Backend blieb die App unbegrenzt im Ladezustand; jetzt 90s-Timeout mit AbortController und Fehlermeldung (F-79)
+- FIX: KI-Fehlerantworten wurden wie ein erfolgreiches Ergebnis inklusive Gemini-Credit-Hinweis angezeigt; Fehler sind jetzt strukturell unterscheidbar und werden ohne Erfolgs-Framing dargestellt (F-88)
+
 ## 1.29.0 - 2026-08-17
 - `apiurl.hilfe` verwendete das Wort „Datensatz" für das Feld, das explizit NICHT die Datensatzseite sein soll (plus Tippfehler „Ressoucen"); jetzt mit expliziter Abgrenzung zu `urlDaten` formuliert (F-68)
 
