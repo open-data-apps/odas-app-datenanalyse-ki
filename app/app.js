@@ -164,10 +164,17 @@ function describeNonJsonPayload(rawContent) {
 
 async function app(configdata, enclosingHtmlDivElement) {
   const dakiUid = "i" + ++dakiInstanzZaehler;
-  const cfg = await Promise.resolve(configdata);
+  const cfg = await Promise.resolve(configdata || {});
   enclosingHtmlDivElement.innerHTML = "";
   enclosingHtmlDivElement.style.maxWidth = "60%";
   enclosingHtmlDivElement.style.margin = "2rem auto";
+
+  const quelle = String(cfg.apiurl || "").trim();
+  if (!quelle || /^\{\{.*\}\}$/.test(quelle) || /^<.*>$/.test(quelle)) {
+    enclosingHtmlDivElement.innerHTML =
+      '<div class="alert alert-info" role="alert">Es ist keine Datenquelle konfiguriert.</div>';
+    return;
+  }
 
   // Funktion-Auswahl-Menü
   showFunctionSelectionMenu(enclosingHtmlDivElement, cfg, dakiUid);
@@ -425,8 +432,8 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
     pkg.resources.length === 0
   ) {
     container.innerHTML += `
-      <div class="alert alert-warning">
-        <i class="fas fa-exclamation-triangle me-2"></i>
+      <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
         Für diesen Datensatz wurden keine Ressourcen gefunden.
       </div>`;
     return;
@@ -635,6 +642,15 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
   const datasetLink = datasetUrl
     ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
     : datasetTitle;
+
+  if (!dataset1.resources || !dataset1.resources.length) {
+    container.innerHTML = `
+      <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+        Für diesen Datensatz wurden keine Ressourcen gefunden.
+      </div>`;
+    return;
+  }
 
   container.innerHTML = `
     <div class="comparison-grid">
@@ -899,8 +915,8 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
     pkg.resources.length === 0
   ) {
     container.innerHTML += `
-      <div class="alert alert-warning">
-        <i class="fas fa-exclamation-triangle me-2"></i>
+      <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
         Für diesen Datensatz wurden keine Ressourcen gefunden.
       </div>`;
     return;
