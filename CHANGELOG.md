@@ -1,5 +1,7 @@
 # Changelog
 
+## 1.31.0 - 2026-08-20
+- Markdown-Metadaten: Paketbeschreibungen auf echtes Markdown umgestellt, exakte Identität Top-Level/Instanz hergestellt, lokale HTML-Fixture semantisch gespiegelt.
 
 ## 1.30.0 - 2026-08-20
 - FIX: KI-Anfragen (`sendToAI`/`sendComparisonToAI`/`sendSearchToAI`) hatten keinen Timeout/Abort — bei hängendem Backend blieb die App unbegrenzt im Ladezustand; jetzt 90s-Timeout mit AbortController und Fehlermeldung (F-79)
