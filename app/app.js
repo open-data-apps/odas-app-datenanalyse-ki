@@ -164,6 +164,17 @@ async function fetchOdasResource(targetUrl, configdata = {}) {
   }
 }
 
+/**
+ * Löst eine benannte Datenressource aus configdata.apiurls auf.
+ * Neue apiurls-Form (typ: "array"); das frühere skalare apiurl wird nicht mehr gelesen.
+ * @returns {string} getrimmte URL, oder "" für den Zustand "keine Quelle konfiguriert"
+ */
+function getOdasApiUrl(configdata, name) {
+  const liste = Array.isArray(configdata && configdata.apiurls) ? configdata.apiurls : [];
+  const treffer = liste.find((eintrag) => eintrag && eintrag.name === name);
+  return String((treffer && treffer.url) || "").trim();
+}
+
 async function fetchOdasJson(targetUrl, configdata = {}) {
   const rawContent = await fetchOdasResource(targetUrl, configdata);
   try {
@@ -188,12 +199,13 @@ function describeNonJsonPayload(rawContent) {
 
 async function app(configdata, enclosingHtmlDivElement) {
   const dakiUid = "i" + ++dakiInstanzZaehler;
-  const cfg = await Promise.resolve(configdata || {});
+  const cfg = { ...(await Promise.resolve(configdata || {})) };
+  cfg.apiurl = getOdasApiUrl(cfg, "analysedaten");
   enclosingHtmlDivElement.innerHTML = "";
   enclosingHtmlDivElement.style.maxWidth = "60%";
   enclosingHtmlDivElement.style.margin = "2rem auto";
 
-  const quelle = String(cfg.apiurl || "").trim();
+  const quelle = cfg.apiurl;
   if (!quelle || /^\{\{.*\}\}$/.test(quelle) || /^<.*>$/.test(quelle)) {
     enclosingHtmlDivElement.innerHTML =
       '<div class="alert alert-info" role="alert">Es ist keine Datenquelle konfiguriert.</div>';

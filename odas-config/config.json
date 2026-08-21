@@ -8,7 +8,7 @@
     "<p>Die KI-Analyse-App unterstützt dabei, offene Datensätze verständlich auszuwerten.</p>",
     "<p>Nutzer:innen wählen eine Ressource aus und erhalten eine KI-gestützte Analyse der verfügbaren Datenstruktur und Inhalte.</p>",
     "<h2>Methodik</h2>",
-    "<p>Die App lädt die Metadaten des konfigurierten Datensatzes über den CKAN-Endpunkt <code>package_show</code> (konfiguriert über <code>apiurl</code>) und zeigt Titel, Beschreibung und die Liste der verfügbaren Ressourcen an. Im Live-Betrieb kann der Abruf optional über den ODAS-Proxy (<code>proxyAktiv</code>) erfolgen, lokal direkt aus der konfigurierten Datenquelle.</p>",
+    "<p>Die App lädt die Metadaten des konfigurierten Datensatzes über den CKAN-Endpunkt <code>package_show</code> (konfiguriert über <code>apiurls.analysedaten</code>) und zeigt Titel, Beschreibung und die Liste der verfügbaren Ressourcen an. Im Live-Betrieb kann der Abruf optional über den ODAS-Proxy (<code>proxyAktiv</code>) erfolgen, lokal direkt aus der konfigurierten Datenquelle.</p>",
     "<p>Je nach Aufgabe wählen Nutzer:innen die Analysefunktion – allgemeine Datensatzanalyse, Vergleich zweier Datensätze oder gezielte Suche – und die dafür zu verwendende(n) Ressource(n) aus.</p>",
     "<p>Für die Analyse übergibt die App die URL der ausgewählten Ressource (beim Vergleich die URLs beider Ressourcen) zusammen mit einem fachlichen Prompt an den ODAS-Endpunkt <code>/ai</code>. Das ODAS-Backend führt die Anfrage aus und liefert das Ergebnis an die App zurück. Die Oberfläche kennzeichnet das Ergebnis als mit Google Gemini erstellt; ein festes Modell oder eine feste Modellversion ist in der App nicht hinterlegt.</p>",
     "<p>KI-generierte Ausgaben können unvollständig oder falsch sein und sollten stets mit der Originalquelle geprüft werden.</p>",
@@ -57,7 +57,13 @@
     "Provided by: Ondics GmbH"
   ],
   "datenbeschreibung": "Hier ist die Beschreibung für die Daten.",
-  "apiurl": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024",
+  "apiurls": [
+    {
+      "name": "analysedaten",
+      "label": "URL zu den Daten",
+      "url": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=muellkalender_2024"
+    }
+  ],
   "sprache": "de",
   "weiterfuehrendeLinks": "<ul><li><a href=\"https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024\" target=\"_blank\">CKAN-Datensatz</a></li><li><a href=\"https://deepmind.google/technologies/gemini/\" target=\"_blank\">Google Gemini Dokumentation</a></li><li><a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google Datenschutzerklärung</a></li></ul>",
   "datenStand": "Stand: abhängig vom ausgewählten Datensatz",

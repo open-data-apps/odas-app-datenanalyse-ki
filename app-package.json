@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "version": "1.31.0",
+  "version": "1.32.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Diese App bringt Künstliche Intelligenz ins Open Data Portal! Mit wenigen Klicks können Datensätze automatisch analysiert werden.",
@@ -15,7 +15,7 @@
     "",
     "## Methodik",
     "",
-    "Die App lädt die Metadaten des konfigurierten Datensatzes über den CKAN-Endpunkt `package_show` (konfiguriert über `apiurl`) und zeigt Titel, Beschreibung und die Liste der verfügbaren Ressourcen an. Im Live-Betrieb kann der Abruf optional über den ODAS-Proxy (`proxyAktiv`) erfolgen, lokal direkt aus der konfigurierten Datenquelle.",
+    "Die App lädt die Metadaten des konfigurierten Datensatzes über den CKAN-Endpunkt `package_show` (konfiguriert über `apiurls.analysedaten`) und zeigt Titel, Beschreibung und die Liste der verfügbaren Ressourcen an. Im Live-Betrieb kann der Abruf optional über den ODAS-Proxy (`proxyAktiv`) erfolgen, lokal direkt aus der konfigurierten Datenquelle.",
     "",
     "Je nach Aufgabe wählen Nutzer:innen die Analysefunktion – allgemeine Datensatzanalyse, Vergleich zweier Datensätze oder gezielte Suche – und die dafür zu verwendende(n) Ressource(n) aus.",
     "",
@@ -147,7 +147,7 @@
         "",
         "## Methodik",
         "",
-        "Die App lädt die Metadaten des konfigurierten Datensatzes über den CKAN-Endpunkt `package_show` (konfiguriert über `apiurl`) und zeigt Titel, Beschreibung und die Liste der verfügbaren Ressourcen an. Im Live-Betrieb kann der Abruf optional über den ODAS-Proxy (`proxyAktiv`) erfolgen, lokal direkt aus der konfigurierten Datenquelle.",
+        "Die App lädt die Metadaten des konfigurierten Datensatzes über den CKAN-Endpunkt `package_show` (konfiguriert über `apiurls.analysedaten`) und zeigt Titel, Beschreibung und die Liste der verfügbaren Ressourcen an. Im Live-Betrieb kann der Abruf optional über den ODAS-Proxy (`proxyAktiv`) erfolgen, lokal direkt aus der konfigurierten Datenquelle.",
         "",
         "Je nach Aufgabe wählen Nutzer:innen die Analysefunktion – allgemeine Datensatzanalyse, Vergleich zweier Datensätze oder gezielte Suche – und die dafür zu verwendende(n) Ressource(n) aus.",
         "",
@@ -297,17 +297,24 @@
       },
       "erforderlich": "ja"
     },
-    "apiurl": {
-      "label": "URL zu den Daten",
+    "apiurls": {
+      "label": "URLs zu Datenressourcen",
       "category": "datenherkunft",
-      "hilfe": "Direkter, maschinenlesbarer Endpunkt, von dem die App die Ressourcen lädt — nicht die Datensatzseite im ODP (siehe „URL zum Datensatz im ODP\"). Beispiel: https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen.",
+      "hilfe": "Direkter Download-, Datei- oder API-Endpunkt der tatsächlich verwendeten Datenquelle(n). Mehrere Einträge möglich.",
+      "typ": "array",
       "format": {
         "typ": "url",
-        "laenge": 255
+        "laenge": 500
       },
-      "default": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen",
-      "beispiel": "",
-      "erforderlich": "ja"
+      "urls": [
+        {
+          "name": "analysedaten",
+          "label": "URL zu den Daten",
+          "default": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen",
+          "beispiel": "",
+          "erforderlich": "ja"
+        }
+      ]
     },
     "sprache": {
       "label": "Sprache der App",
