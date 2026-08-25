@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "app-version": "1.35.0",
+  "app-version": "1.36.0",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -31,7 +31,7 @@
     "Die analysierten Inhalte stammen aus dem in der Instanz konfigurierten CKAN-Datensatz.",
     "",
     "- **Open Data Portal:** [Open Data Musterstadt](https://open-data-musterstadt.ckan.de)",
-    "- **Datensatz:** [Konfigurierter Beispieldatensatz](https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen)",
+    "- **Datensatz:** [Konfigurierter Beispieldatensatz]({{{appinstanz.urlDaten}}})",
     "- **Ressource/API-Endpunkt:** [CKAN package_show API](https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen)",
     "",
     "Weitere Hinweise:",
@@ -163,7 +163,7 @@
         "Die analysierten Inhalte stammen aus dem in der Instanz konfigurierten CKAN-Datensatz.",
         "",
         "- **Open Data Portal:** [Open Data Musterstadt](https://open-data-musterstadt.ckan.de)",
-        "- **Datensatz:** [Konfigurierter Beispieldatensatz](https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen)",
+        "- **Datensatz:** [Konfigurierter Beispieldatensatz]({{{appinstanz.urlDaten}}})",
         "- **Ressource/API-Endpunkt:** [CKAN package_show API](https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen)",
         "",
         "Weitere Hinweise:",
@@ -259,7 +259,7 @@
       "format": {
         "typ": "markdown"
       },
-      "default": "- [CKAN-Datensatz](https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen)\n- [Google Gemini Dokumentation](https://deepmind.google/technologies/gemini/)\n- [Google Datenschutzerklärung](https://policies.google.com/privacy)",
+      "default": "- [CKAN-Datensatz]({{{appinstanz.urlDaten}}})\n- [Google Gemini Dokumentation](https://deepmind.google/technologies/gemini/)\n- [Google Datenschutzerklärung](https://policies.google.com/privacy)",
       "erforderlich": "nein"
     },
     "urlDaten": {
@@ -269,7 +269,7 @@
       "format": {
         "typ": "url"
       },
-      "default": "https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024",
+      "default": "https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen",
       "beispiel": "",
       "erforderlich": "ja"
     },

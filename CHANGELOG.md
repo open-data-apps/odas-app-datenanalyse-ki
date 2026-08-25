@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.36.0 - 2026-08-25
+- **CHG:** Datensatz-Links in der Beschreibung nutzen den neuen Shortcode `{{{appinstanz.urlDaten}}}` und zeigen damit auf den tatsächlich gebuchten Datensatz statt auf feste Beispiel-URLs.
+- **FIX:** `urlDaten`-Beispielwert korrigiert: verwies fälschlich auf den Müllkalender-Datensatz, jetzt auf den eigenen Datensatz „Geschwindigkeitsüberschreitungen“.
+
+
 ## 1.35.0 - 2026-08-25
 - **CHG:** Proxy-Aufruf sendet die vollständige Ziel-URL statt nur Pfad+Query, damit die neue Origin-Allowlist-Prüfung der ODAS-Plattform greift (bisher implizite Auflösung gegen den ersten konfigurierten `apiurl`).
 - **FIX:** Tote Anbieter-Shortcodes in Kontakt/Impressum ersetzt (`{{odp.anbieter.url-extern}}` → `{{odp.anbieter.url}}`, `tel:{{odp.anbieter.telcode}}` → `tel:{{odp.anbieter.tel}}`).
