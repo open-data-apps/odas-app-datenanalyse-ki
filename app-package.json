@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "app-version": "1.33.0",
+  "app-version": "1.34.0",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -269,7 +269,7 @@
       "format": {
         "typ": "url"
       },
-      "default": "https://open-data-musterstadt.ckan.de/dataset/geschwindigkeitsuberschreitungen/resource/39627e03-611f-4ab6-9af2-e83ab5120929",
+      "default": "https://open-data-musterstadt.ckan.de/dataset/muellkalender_2024",
       "beispiel": "",
       "erforderlich": "ja"
     },
