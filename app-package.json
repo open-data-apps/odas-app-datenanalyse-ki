@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "app-version": "1.36.0",
+  "app-version": "1.36.1",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -356,7 +356,7 @@
   "daten": {
     "beschreibung": "Die KI-Analyse-App verarbeitet konfigurierbare Open-Data-Ressourcen aus dem Open Data Portal (z.B. JSON- oder CSV-Endpunkte).",
     "schema": "assets/schema.json",
-    "beispiel": "",
-    "beispiel-url": ""
+    "beispiel": "CKAN-package_show-Antwort mit result.resources[] zur Ressourcenauswahl (JSON); die Analyse läuft auf der gewählten Ressource.",
+    "beispiel-url": "https://open-data-musterstadt.ckan.de/api/3/action/package_show?id=geschwindigkeitsuberschreitungen"
   }
 }

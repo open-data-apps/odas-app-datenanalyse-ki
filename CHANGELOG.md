@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.36.1 - 2026-09-07
+- **FIX:** Frictionless-Härtung: `daten.beispiel`/`beispiel-url` befüllt (Schema beschreibt belegt die package_show-Ressourcenauswahl). package_show-Default bleibt (4B-Ausnahme: Metadaten-Antwort nicht tabellarisch validierbar, Rot-Beleg im REPORT).
+
 ## 1.36.0 - 2026-08-25
 - **CHG:** Datensatz-Links in der Beschreibung nutzen den neuen Shortcode `{{{appinstanz.urlDaten}}}` und zeigen damit auf den tatsächlich gebuchten Datensatz statt auf feste Beispiel-URLs.
 - **FIX:** `urlDaten`-Beispielwert korrigiert: verwies fälschlich auf den Müllkalender-Datensatz, jetzt auf den eigenen Datensatz „Geschwindigkeitsüberschreitungen“.
