@@ -366,8 +366,28 @@ async function app(configdata, enclosingHtmlDivElement) {
 
   const quelle = cfg.apiurl;
   if (!quelle || /^\{\{.*\}\}$/.test(quelle) || /^<.*>$/.test(quelle)) {
-    enclosingHtmlDivElement.innerHTML =
-      '<div class="alert alert-info" role="alert">Es ist keine Datenquelle konfiguriert.</div>';
+    renderOdasFehler(
+      enclosingHtmlDivElement,
+      new Error("Keine Datenquelle konfiguriert."),
+      {
+        url: quelle,
+        label: "Analyse-Datensatz-API",
+        typLabel: "Datensatz-API",
+        erwarteterTyp: "ckan-ps",
+      },
+    );
+    return;
+  }
+
+  // Variante A (F-92): Typprüfung vor dem ersten Fetch.
+  const dakiTypWarn = validateUrlTypErwartung(quelle, "ckan-ps");
+  if (dakiTypWarn) {
+    renderOdasFehler(enclosingHtmlDivElement, new Error(dakiTypWarn), {
+      url: quelle,
+      label: "Analyse-Datensatz-API",
+      typLabel: "Datensatz-API",
+      erwarteterTyp: "ckan-ps",
+    });
     return;
   }
 
@@ -578,11 +598,12 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
       throw new Error("Unbekanntes API-Format");
     }
   } catch (err) {
-    container.innerHTML = `
-      <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden der Daten:<br><code>${escapeHtml(err.message)}</code>
-      </div>`;
+    renderOdasFehler(container, err, {
+      url: cfg.apiurl,
+      label: "Analyse-Datensatz-API",
+      typLabel: "Datensatz-API",
+      erwarteterTyp: "ckan-ps",
+    });
     return;
   }
 
@@ -830,11 +851,12 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
       throw new Error("Unbekanntes API-Format");
     }
   } catch (err) {
-    container.innerHTML = `
-      <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden des ersten Datensatzes:<br><code>${escapeHtml(err.message)}</code>
-      </div>`;
+    renderOdasFehler(container, err, {
+      url: cfg.apiurl,
+      label: "Erster Analyse-Datensatz",
+      typLabel: "Datensatz-API",
+      erwarteterTyp: "ckan-ps",
+    });
     return;
   }
 
@@ -1097,11 +1119,12 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
       throw new Error("Unbekanntes API-Format");
     }
   } catch (err) {
-    container.innerHTML = `
-      <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        Fehler beim Laden der Daten:<br><code>${escapeHtml(err.message)}</code>
-      </div>`;
+    renderOdasFehler(container, err, {
+      url: cfg.apiurl,
+      label: "Analyse-Datensatz-API",
+      typLabel: "Datensatz-API",
+      erwarteterTyp: "ckan-ps",
+    });
     return;
   }
 
