@@ -1,7 +1,9 @@
 # Changelog
 
-## 1.36.1 - 2026-09-07
+## 1.36.2 - 2026-09-08
 - **FIX:** Variante-A-Verdrahtung (F-92): Typprüfung (ckan-ps) vor dem ersten Fetch; alle drei Ladefehler-Pfade über `renderOdasFehler` (1.36.1 -> 1.36.2).
+
+## 1.36.1 - 2026-09-07
 - **FIX:** Frictionless-Härtung: `daten.beispiel`/`beispiel-url` befüllt (Schema beschreibt belegt die package_show-Ressourcenauswahl). package_show-Default bleibt (4B-Ausnahme: Metadaten-Antwort nicht tabellarisch validierbar, Rot-Beleg im REPORT).
 
 ## 1.36.0 - 2026-08-25
