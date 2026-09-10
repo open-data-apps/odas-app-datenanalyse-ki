@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.36.3 - 2026-09-10
+- **FIX:** `rel="noopener"` an allen 6 `target="_blank"`-Links nachgetragen (H-2, Tabsicherheit-Härtung ohne Verhaltensänderung).
+
 ## 1.36.2 - 2026-09-08
 - **FIX:** Variante-A-Verdrahtung (F-92): Typprüfung (ckan-ps) vor dem ersten Fetch; alle drei Ladefehler-Pfade über `renderOdasFehler` (1.36.1 -> 1.36.2).
 

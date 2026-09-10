@@ -616,7 +616,7 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
   );
   const datasetTitle = escapeHtml(pkg.title);
   const datasetLink = datasetUrl
-    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
+    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank" rel="noopener">${datasetTitle}</a>`
     : datasetTitle;
 
   container.innerHTML = `
@@ -786,7 +786,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
           <div class="card-text analysis-result mb-3">${escapeHtml(aiData.result)}</div>
           <div class="ai-credit">
             <i class="fas fa-robot me-2"></i>
-            Die Analyse wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank">Google Gemini</a> durchgeführt.
+            Die Analyse wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank" rel="noopener">Google Gemini</a> durchgeführt.
           </div>
         </div>
       </div>`;
@@ -869,7 +869,7 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
   );
   const datasetTitle = escapeHtml(dataset1.title);
   const datasetLink = datasetUrl
-    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
+    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank" rel="noopener">${datasetTitle}</a>`
     : datasetTitle;
 
   if (!dataset1.resources || !dataset1.resources.length) {
@@ -1045,7 +1045,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
           <div class="card-text analysis-result mb-3">${escapeHtml(aiData.result)}</div>
           <div class="ai-credit">
             <i class="fas fa-robot me-2"></i>
-            Die Vergleichsanalyse wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank">Google Gemini</a> durchgeführt.
+            Die Vergleichsanalyse wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank" rel="noopener">Google Gemini</a> durchgeführt.
           </div>
         </div>
       </div>`;
@@ -1137,7 +1137,7 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
   );
   const datasetTitle = escapeHtml(pkg.title);
   const datasetLink = datasetUrl
-    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank">${datasetTitle}</a>`
+    ? `<a href="${escapeHtml(datasetUrl)}" target="_blank" rel="noopener">${datasetTitle}</a>`
     : datasetTitle;
 
   container.innerHTML = `
@@ -1301,7 +1301,7 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
           <div class="card-text analysis-result mb-3">${escapeHtml(aiData.result)}</div>
           <div class="ai-credit">
             <i class="fas fa-robot me-2"></i>
-            Die Suche wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank">Google Gemini</a> durchgeführt.
+            Die Suche wurde mit <a href="https://deepmind.google/technologies/gemini/" target="_blank" rel="noopener">Google Gemini</a> durchgeführt.
           </div>
         </div>
       </div>`;
