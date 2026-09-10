@@ -55,3 +55,18 @@
 .daki-weitere-infos-content a {
   overflow-wrap: anywhere;
 }
+
+/* KI-B2: Breiten-/Rand-Layout als Klasse auf dem Container statt als
+   Inline-Style. Der Teardown entfernt die Klasse, damit nachfolgende Seiten
+   nicht dauerhaft auf 60 % Breite gerendert werden. */
+.daki-container {
+  max-width: 60%;
+  margin: 2rem auto;
+}
+
+@media (max-width: 992px) {
+  .daki-container {
+    max-width: 100%;
+    margin: 0;
+  }
+}

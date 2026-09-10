@@ -20,12 +20,16 @@ Die APP ist eine Single Page Application Webapp. Mit:
 - Logo Anzeige
 - Menü
 - Seiten für Impressum, Datenschutz, Beschreibung, Kontakt, Hauptinhalt
-- Inhaltsbereich mit Auswahl der Ressource des Datensatzes und Analyse Button
 - Fußzeile
+- Auswahl einer von drei KI-Analysefunktionen für den konfigurierten Datensatz:
+  **allgemeine Datensatzanalyse**, **Vergleich zweier Datensätze** und
+  **gezielte Datensatzsuche**
+- Ressourcen-Auswahl je Datensatz (Bilddateien werden vorab abgewiesen)
+- Ergebnisdarstellung mit Kennzeichnung als KI-generiert (Google Gemini) und
+  Wiederholen-Schaltfläche im Fehlerfall
+- Laufende KI-Anfragen werden beim Seitenwechsel abgebrochen
 
 Die Konfiguration wird vom ODAS geladen.
-
-Die APP zeigt Ihre Konfiguration im JSON Format an.
 
 ## Entwicklung
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.36.4 - 2026-09-10
+- **FIX (KI-B1):** Die App hatte keinerlei Lifecycle-Schutz. Jetzt gibt es `onPageLeave` mit Instanz-Registry, `disposed`-Guard und `AbortController`: Ein laufender `/ai`-POST (bis 90 s) wird beim Seitenwechsel abgebrochen, und späte Fortsetzungen schreiben nicht mehr in den dann fremden Container. Damit ist der letzte offene Fall der F-57/F-70-Klasse geschlossen.
+- **FIX (KI-B2):** Das Breiten-Layout lag als Inline-Style auf dem geteilten `#main-content` und blieb sitzungsweit hängen (app-base ersetzt nur `innerHTML`). Jetzt eine Klasse (`.daki-container`), die der Teardown entfernt; auf kleinen Bildschirmen greift die Breite nicht mehr.
+- **FIX (KI-B3):** Die Prompts forderten HTML-Formatierung, die Ausgabe wird aber escaped als Text gerendert — Nutzer sahen `<h3>`/`<ul>` als Klartext. Die Prompts verlangen jetzt einfachen Text mit Absätzen und Aufzählungen; das Escaping bleibt (keine neue XSS-Senke).
+- **FIX (KI-B4):** `loadDatasetFromUrl` meldete Fehler per nativem `alert()`. Jetzt liefert die Funktion ein Ergebnisobjekt, und der Aufrufer zeigt die Meldung über `renderOdasFehler`.
+- **FIX (KI-B5):** FontAwesome und Lottie werden per `ladeUiBibliotheken()` mit Element-id und Fehlerpfad geladen statt per `addToHead()` ohne Rückmeldung; `addToHead` gibt `""` zurück.
+- **TECH (KI-B6):** `isLeerErgebnis` entfernt; ungenutzter Parameter `datasetTitle` aus `sendToAI` entfernt (der Prompt nutzt ihn nicht); `datasetId` wird beim Bau der `package_show`-URL encodiert.
+- **DOC:** README-Abschnitt „Funktionen" beschrieb noch den Template-Zustand („zeigt Ihre Konfiguration im JSON Format an") und listet jetzt die drei tatsächlichen KI-Funktionen.
+
 ## 1.36.3 - 2026-09-10
 - **FIX:** `rel="noopener"` an allen 6 `target="_blank"`-Links nachgetragen (H-2, Tabsicherheit-Härtung ohne Verhaltensänderung).
 

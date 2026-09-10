@@ -1,5 +1,37 @@
 let dakiInstanzZaehler = 0;
 
+// F-57/KI-B1: Instanz-Registry je Container (Portfolio-Muster). Die App hatte
+// bisher keinerlei Lifecycle-Schutz: ein laufender /ai-POST (bis 90 s) wurde
+// beim Seitenwechsel weder abgebrochen noch verworfen.
+const dakiInstanzen = new Map();
+
+function onPageLeave() {
+  dakiInstanzen.forEach(function (zustand) {
+    try {
+      zustand.abmelden();
+    } catch (error) {
+      console.warn("Fehler beim Abraeumen der KI-Analyse-Instanz:", error);
+    }
+  });
+  dakiInstanzen.clear();
+}
+
+function zustandFuer(root) {
+  return (root && dakiInstanzen.get(root)) || null;
+}
+
+// Nach einem Seitenwechsel darf keine spaete Fortsetzung mehr in den (dann
+// fremden) Container schreiben.
+function istVerworfen(root) {
+  const zustand = zustandFuer(root);
+  return !zustand || zustand.disposed;
+}
+
+function signalFuer(root) {
+  const zustand = zustandFuer(root);
+  return zustand ? zustand.controller.signal : undefined;
+}
+
 // Client-seitiges Timeout für /ai-Aufrufe (F-79): verhindert unbegrenztes
 // Hängenbleiben im Ladezustand, falls das ODAS-Backend nicht antwortet.
 const AI_REQUEST_TIMEOUT_MS = 90000;
@@ -346,23 +378,39 @@ function renderOdasFehler(container, error, kontext = {}) {
   container.innerHTML = `<div class="alert ${alertClass}" role="alert"><strong>${escapeHtml(titel)}</strong><p class="mb-1">${escapeHtml(info.hinweis)}</p>${urlZeile}<details class="small"><summary>Details</summary><code>${escapeHtml(info.detail || String(error))}</code></details></div>`;
 }
 
-function isLeerErgebnis(json) {
-  if (!json) return true;
-  if (Array.isArray(json) && json.length === 0) return true;
-  if (Array.isArray(json.records) && json.records.length === 0) return true;
-  if (Array.isArray(json.results) && json.results.length === 0) return true;
-  if (json.result && Array.isArray(json.result.records) && json.result.records.length === 0) return true;
-  return false;
-}
-
 
 async function app(configdata, enclosingHtmlDivElement) {
   const dakiUid = "i" + ++dakiInstanzZaehler;
+
+  // KI-B1: Zustand und Teardown SOFORT registrieren — vor dem await auf die
+  // Konfiguration und vor jedem Fetch/POST.
+  const zustand = {
+    disposed: false,
+    controller: new AbortController(),
+    abmelden: function () {
+      this.disposed = true;
+      this.controller.abort();
+      // KI-B2: Der Breiten-Stil haengt sonst sitzungsweit am geteilten
+      // #main-content (app-base ersetzt nur innerHTML, keine Styles).
+      enclosingHtmlDivElement.classList.remove("daki-container");
+    },
+  };
+  const dakiVorheriger = dakiInstanzen.get(enclosingHtmlDivElement);
+  if (dakiVorheriger) {
+    try {
+      dakiVorheriger.abmelden();
+    } catch (_e) {}
+  }
+  dakiInstanzen.set(enclosingHtmlDivElement, zustand);
+
   const cfg = { ...(await Promise.resolve(configdata || {})) };
+  if (zustand.disposed) return;
   cfg.apiurl = getOdasApiUrl(cfg, "analysedaten");
+  if (zustand.disposed) return;
   enclosingHtmlDivElement.innerHTML = "";
-  enclosingHtmlDivElement.style.maxWidth = "60%";
-  enclosingHtmlDivElement.style.margin = "2rem auto";
+  // KI-B2: Klasse statt Inline-Styles (siehe app.css); wird im Teardown entfernt.
+  enclosingHtmlDivElement.classList.add("daki-container");
+  ladeUiBibliotheken();
 
   const quelle = cfg.apiurl;
   if (!quelle || /^\{\{.*\}\}$/.test(quelle) || /^<.*>$/.test(quelle)) {
@@ -586,7 +634,7 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
   let datenStand = null;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
-    const json = await fetchOdasJson(cfg.apiurl, cfg);
+    const json = await fetchOdasJson(cfg.apiurl, cfg, { signal: signalFuer(root) });
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -753,10 +801,11 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
     const aiData = await sendToAI(
       resourceUrl,
       resourceName,
-      pkg.title,
       pkg.notes || "",
-      "general"
+      "general",
+      root,
     );
+    if (istVerworfen(root)) return;
 
     if (aiData?.error) {
       renderAiErrorCard(
@@ -837,7 +886,7 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
   let dataset1;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
-    const json = await fetchOdasJson(cfg.apiurl, cfg);
+    const json = await fetchOdasJson(cfg.apiurl, cfg, { signal: signalFuer(root) });
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -973,15 +1022,24 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
       statusEl.innerHTML =
         '<span class="status-indicator status-loading"></span>Lade Datensatz...';
 
-      dataset2 = await loadDatasetFromUrl(url, cfg);
-      if (dataset2) {
+      const geladen = await loadDatasetFromUrl(url, cfg, root);
+      if (istVerworfen(root)) return;
+      if (geladen.ok) {
+        dataset2 = geladen.dataset;
         populateResourceSelect("resource2-select", dataset2.resources, root);
         statusEl.innerHTML =
           '<span class="status-indicator status-success"></span><strong>Datensatz erfolgreich geladen</strong>';
         checkCompareButton();
       } else {
-        statusEl.innerHTML =
-          '<span class="status-indicator status-error"></span>Fehler beim Laden';
+        dataset2 = null;
+        statusEl.innerHTML = "";
+        renderOdasFehler(statusEl, new Error(geladen.message), {
+          url,
+          label: "Zweiter Datensatz",
+          typLabel: "Datensatz-API",
+          erwarteterTyp: "ckan-ps",
+        });
+        checkCompareButton();
       }
     });
 
@@ -1014,8 +1072,10 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
       resource1,
       resource2,
       dataset1,
-      dataset2
+      dataset2,
+      root,
     );
+    if (istVerworfen(root)) return;
 
     if (aiData?.error) {
       renderAiErrorCard(
@@ -1107,7 +1167,7 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
   let datenStand = null;
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
-    const json = await fetchOdasJson(cfg.apiurl, cfg);
+    const json = await fetchOdasJson(cfg.apiurl, cfg, { signal: signalFuer(root) });
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -1268,7 +1328,8 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
       </div>
     `;
 
-    const aiData = await sendSearchToAI(resource, pkg, query);
+    const aiData = await sendSearchToAI(resource, pkg, query, root);
+    if (istVerworfen(root)) return;
 
     if (aiData?.error) {
       renderAiErrorCard(
@@ -1311,29 +1372,30 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
 }
 
 // Hilfsfunktionen
-async function loadDatasetFromUrl(url, cfg = {}) {
+async function loadDatasetFromUrl(url, cfg = {}, root) {
   try {
     // Vereinfachte URL-Verarbeitung für CKAN APIs
     let apiUrl = url;
     if (url.includes("/dataset/")) {
       const datasetId = url.split("/dataset/")[1].split("/")[0];
       const baseUrl = url.split("/dataset/")[0];
-      apiUrl = `${baseUrl}/api/3/action/package_show?id=${datasetId}`;
+      apiUrl = `${baseUrl}/api/3/action/package_show?id=${encodeURIComponent(datasetId)}`;
     }
 
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
-    const json = await fetchOdasJson(apiUrl, cfg);
+    const json = await fetchOdasJson(apiUrl, cfg, { signal: signalFuer(root) });
 
     if (json.success && json.result) {
       json.result.resources = Array.isArray(json.result.resources)
         ? json.result.resources
         : [];
-      return json.result;
+      return { ok: true, dataset: json.result };
     }
     throw new Error("Datensatz konnte nicht geladen werden");
   } catch (err) {
-    alert(`Fehler beim Laden des Datensatzes: ${err.message}`);
-    return null;
+    // KI-B4: kein natives alert() mehr — der Aufrufer zeigt die Meldung in der
+    // Fehlerarchitektur (renderOdasFehler) an.
+    return { ok: false, message: err && err.message ? err.message : String(err) };
   }
 }
 
@@ -1353,12 +1415,21 @@ function populateResourceSelect(selectId, resources, root) {
 // Führt den POST an den /ai-Endpunkt mit Timeout/Abort aus (F-79) und liefert
 // bei Fehlern eine strukturell unterscheidbare Form { error: true, message }
 // statt eines als Erfolg getarnten result-Strings (F-88).
-async function postAiRequest(body, errorLabel) {
+async function postAiRequest(body, errorLabel, root) {
   const controller = new AbortController();
   const timeoutId = setTimeout(
     () => controller.abort(),
     AI_REQUEST_TIMEOUT_MS
   );
+  // KI-B1: Beim Seitenwechsel wird der laufende /ai-POST abgebrochen statt bis
+  // zu 90 s weiterzulaufen (Timeout- und Navigationsabbruch teilen sich den
+  // Controller, damit kein AbortSignal.any vorausgesetzt wird).
+  const instanzSignal = signalFuer(root);
+  const beiNavigation = () => controller.abort();
+  if (instanzSignal) {
+    if (instanzSignal.aborted) controller.abort();
+    else instanzSignal.addEventListener("abort", beiNavigation, { once: true });
+  }
   try {
     const aiUrl = `${getOdasAppBasePath()}/ai`;
     const aiResp = await fetch(aiUrl, {
@@ -1377,6 +1448,10 @@ async function postAiRequest(body, errorLabel) {
     return await aiResp.json();
   } catch (err) {
     if (err.name === "AbortError") {
+      if (istVerworfen(root)) {
+        // Navigationsabbruch: keine Meldung, keine DOM-Schreiber.
+        return { error: true, message: "Abgebrochen." };
+      }
       console.error(`${errorLabel} (Zeitüberschreitung):`, err);
       return {
         error: true,
@@ -1388,15 +1463,16 @@ async function postAiRequest(body, errorLabel) {
     return { error: true, message: `${errorLabel}: ${err.message}` };
   } finally {
     clearTimeout(timeoutId);
+    if (instanzSignal) instanzSignal.removeEventListener("abort", beiNavigation);
   }
 }
 
 async function sendToAI(
   resourceUrl,
   resourceName,
-  datasetTitle,
   datasetDesc,
-  analysisType = "general"
+  analysisType = "general",
+  root
 ) {
   const fileUrl = resourceUrl;
 
@@ -1417,12 +1493,13 @@ async function sendToAI(
 
   return postAiRequest(
     { fileUrl: fileUrl, prompt: promptText },
-    "Fehler beim KI-Aufruf"
+    "Fehler beim KI-Aufruf",
+    root
   );
 }
 
 // Spezielle KI-Funktion für Datensatzvergleich
-async function sendComparisonToAI(resource1, resource2, dataset1, dataset2) {
+async function sendComparisonToAI(resource1, resource2, dataset1, dataset2, root) {
   const resource1Url =
     resource1.url || resource1.accessURL || resource1.downloadURL || "";
   const resource2Url =
@@ -1452,16 +1529,17 @@ async function sendComparisonToAI(resource1, resource2, dataset1, dataset2) {
     `6. QUALITÄTSBEWERTUNG: Bewerte Vollständigkeit, Aktualität und Zuverlässigkeit beider Datensätze im Vergleich\n` +
     `7. SYNTHESEERKENNTNISSE: Ziehe Schlussfolgerungen aus der Kombination beider Datensätze und identifiziere übergreifende Insights\n` +
     `8. HANDLUNGSEMPFEHLUNGEN: Gib konkrete Empfehlungen für die kombinierte Nutzung oder weitere Analyseschritte\n\n` +
-    `Strukturiere deine Antwort klar und verwende HTML-Formatierung für bessere Lesbarkeit. Beginne mit einer Executive Summary der wichtigsten Erkenntnisse.`;
+    `Strukturiere deine Antwort klar mit kurzen Absätzen und Aufzählungen in einfachem Text — keine HTML-Tags. Beginne mit einer Executive Summary der wichtigsten Erkenntnisse.`;
 
   return postAiRequest(
     { fileUrls: [resource1Url, resource2Url], prompt: promptText },
-    "Fehler beim KI-Vergleichsaufruf"
+    "Fehler beim KI-Vergleichsaufruf",
+    root
   );
 }
 
 // Spezielle KI-Funktion für Datensatzsuche
-async function sendSearchToAI(resource, dataset, searchQuery) {
+async function sendSearchToAI(resource, dataset, searchQuery, root) {
   const resourceUrl =
     resource.url || resource.accessURL || resource.downloadURL || "";
   const resourceName =
@@ -1486,26 +1564,45 @@ async function sendSearchToAI(resource, dataset, searchQuery) {
     `AUSGABEFORMAT:\n` +
     `- Beginne mit einer klaren Zusammenfassung der Suchergebnisse\n` +
     `- Präsentiere konkrete Daten, Zahlen oder Beispiele aus dem Datensatz\n` +
-    `- Verwende HTML-Formatierung für bessere Struktur\n` +
+    `- Gliedere die Antwort mit kurzen Absätzen und Aufzählungen (einfacher Text, keine HTML-Tags)\n` +
     `- Falls keine exakten Treffer gefunden werden, schlage alternative Suchansätze vor\n` +
     `- Gib Hinweise für weiterführende Analysen\n\n` +
     `Konzentriere dich ausschließlich auf die Beantwortung der spezifischen Suchanfrage und liefere präzise, verwertbare Ergebnisse.`;
 
   return postAiRequest(
     { fileUrl: resourceUrl, prompt: promptText },
-    "Fehler beim KI-Suchaufruf"
+    "Fehler beim KI-Suchaufruf",
+    root
   );
 }
 
+/*
+ * addToHead() – laedt nichts mehr selbst (KI-B5). FontAwesome und Lottie
+ * werden per ladeUiBibliotheken() aus app/vendor/ geladen, mit Script-id und
+ * Fehlerpfad statt stillem Weglassen.
+ */
 function addToHead() {
-  const fa = document.createElement("link");
-  fa.rel = "stylesheet";
-  fa.href =
-    "vendor/fontawesome/css/all.min.css";
-  document.head.appendChild(fa);
+  return ``;
+}
 
+function ladeUiBibliotheken() {
+  if (!document.getElementById("daki-fontawesome")) {
+    const fa = document.createElement("link");
+    fa.id = "daki-fontawesome";
+    fa.rel = "stylesheet";
+    fa.href = "vendor/fontawesome/css/all.min.css";
+    fa.onerror = function () {
+      console.warn("FontAwesome konnte nicht geladen werden.");
+    };
+    document.head.appendChild(fa);
+  }
+  if (typeof customElements !== "undefined" && customElements.get("lottie-player")) return;
+  if (document.getElementById("daki-lottie")) return;
   const lottie = document.createElement("script");
-  lottie.src =
-    "vendor/lottie/lottie-player.js";
+  lottie.id = "daki-lottie";
+  lottie.src = "vendor/lottie/lottie-player.js";
+  lottie.onerror = function () {
+    console.warn("Lottie konnte nicht geladen werden.");
+  };
   document.head.appendChild(lottie);
 }
