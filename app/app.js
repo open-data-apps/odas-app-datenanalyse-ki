@@ -740,12 +740,16 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
 }
 
 function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
+  // F-121: Nur die jüngste Anfrage zur aktuellen Auswahl darf ihr Ergebnis zeigen.
+  let requestVersion = 0;
   const selectEl = root.querySelector(`#daki-resource-select-${uid}`);
   const resourceDesc = root.querySelector("#daki-resource-desc");
   const analyzeBtn = root.querySelector("#daki-analyze-btn");
   const analyzeInfo = root.querySelector("#daki-analyze-info");
 
   function updateResourceInfo() {
+    requestVersion++;
+    root.querySelector("#daki-analysis-result").innerHTML = "";
     const selectedIdx = parseInt(selectEl.value, 10);
     const resource = pkg.resources[selectedIdx];
     const selectedUrl =
@@ -773,6 +777,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
   updateResourceInfo();
 
   async function runGeneralAnalysis() {
+    const version = ++requestVersion;
     const selectedIdx = parseInt(selectEl.value, 10);
     const resource = pkg.resources[selectedIdx];
     const resourceUrl =
@@ -805,7 +810,7 @@ function setupGeneralAnalysisEvents(pkg, cfg, root, uid) {
       "general",
       root,
     );
-    if (istVerworfen(root)) return;
+    if (istVerworfen(root) || version !== requestVersion || !resultDiv.isConnected) return;
 
     if (aiData?.error) {
       renderAiErrorCard(
@@ -993,11 +998,19 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
 
 function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
   let dataset2 = null;
+  // F-121: Datensatzabruf und Vergleich haben getrennte Anfragegenerationen.
+  let requestVersion = 0;
+  let loadVersion = 0;
+  function invalidateComparison() {
+    requestVersion++;
+    root.querySelector("#daki-comparison-result").innerHTML = "";
+  }
 
   const selectEl1 = root.querySelector(`#daki-resource1-select-${uid}`);
   const resourceDesc1 = root.querySelector("#daki-resource1-desc");
 
   function updateResource1Info() {
+    invalidateComparison();
     const selectedIdx = parseInt(selectEl1.value, 10);
     const resource = dataset1.resources[selectedIdx];
 
@@ -1011,21 +1024,45 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
 
   selectEl1.addEventListener("change", updateResource1Info);
   updateResource1Info();
+  const selectEl2 = root.querySelector("#daki-resource2-select");
+  selectEl2.addEventListener("change", invalidateComparison);
+  root.querySelector("#daki-dataset2-url").addEventListener("input", () => {
+    loadVersion++;
+    dataset2 = null;
+    selectEl2.disabled = true;
+    selectEl2.innerHTML = "<option>Zuerst Datensatz laden...</option>";
+    root.querySelector("#daki-dataset2-status").innerHTML = "";
+    invalidateComparison();
+    checkCompareButton();
+  });
 
   root
     .querySelector("#daki-load-dataset2-btn")
     .addEventListener("click", async () => {
       const url = root.querySelector("#daki-dataset2-url").value.trim();
       if (!url) return;
+      const version = ++loadVersion;
+      dataset2 = null;
+      selectEl2.disabled = true;
+      selectEl2.innerHTML = "<option>Zuerst Datensatz laden...</option>";
+      invalidateComparison();
+      checkCompareButton();
 
       const statusEl = root.querySelector("#daki-dataset2-status");
       statusEl.innerHTML =
         '<span class="status-indicator status-loading"></span>Lade Datensatz...';
 
       const geladen = await loadDatasetFromUrl(url, cfg, root);
-      if (istVerworfen(root)) return;
+      if (istVerworfen(root) || version !== loadVersion || !statusEl.isConnected) return;
       if (geladen.ok) {
         dataset2 = geladen.dataset;
+        if (!Array.isArray(dataset2.resources) || dataset2.resources.length === 0) {
+          // F-120: leerer Datensatz ist kein Erfolg; Auswahl und Vergleich bleiben gesperrt.
+          statusEl.innerHTML =
+            '<div class="alert alert-info mb-0" role="alert">Für diesen Datensatz wurden keine Ressourcen gefunden.</div>';
+          checkCompareButton();
+          return;
+        }
         populateResourceSelect("resource2-select", dataset2.resources, root);
         statusEl.innerHTML =
           '<span class="status-indicator status-success"></span><strong>Datensatz erfolgreich geladen</strong>';
@@ -1044,6 +1081,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
     });
 
   async function runComparisonAnalysis() {
+    const version = ++requestVersion;
     const resource1Idx = parseInt(selectEl1.value, 10);
     const resource2Idx = parseInt(
       root.querySelector("#daki-resource2-select").value,
@@ -1051,7 +1089,18 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
     );
 
     const resource1 = dataset1.resources[resource1Idx];
-    const resource2 = dataset2.resources[resource2Idx];
+    const resource2 =
+      dataset2 && Array.isArray(dataset2.resources)
+        ? dataset2.resources[resource2Idx]
+        : undefined;
+
+    // F-120: Ohne gültige Ressource auf beiden Seiten keinen Ladezustand
+    // starten — der Klick blieb zuvor bei "Vergleichsanalyse läuft..." hängen.
+    if (!resource1 || !resource2) {
+      root.querySelector("#daki-comparison-result").innerHTML =
+        '<div class="alert alert-warning" role="alert">Bitte zuerst zwei Datensätze mit Ressourcen laden und auswählen.</div>';
+      return;
+    }
 
     const resultDiv = root.querySelector("#daki-comparison-result");
     resultDiv.innerHTML = `
@@ -1075,7 +1124,7 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
       dataset2,
       root,
     );
-    if (istVerworfen(root)) return;
+    if (istVerworfen(root) || version !== requestVersion || !resultDiv.isConnected) return;
 
     if (aiData?.error) {
       renderAiErrorCard(
@@ -1117,8 +1166,10 @@ function setupComparisonAnalysisEvents(dataset1, cfg, root, uid) {
 
   function checkCompareButton() {
     const btn = root.querySelector("#daki-compare-btn");
-    btn.disabled = !dataset2;
-    if (dataset2) {
+    const bereit =
+      dataset2 && Array.isArray(dataset2.resources) && dataset2.resources.length > 0;
+    btn.disabled = !bereit;
+    if (bereit) {
       btn.innerHTML =
         '<i class="fas fa-sync-alt me-2"></i>Vergleichsanalyse starten!';
     }
@@ -1276,12 +1327,18 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
 }
 
 function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
+  let requestVersion = 0;
+  function invalidateSearch() {
+    requestVersion++;
+    root.querySelector("#daki-search-result").innerHTML = "";
+  }
   const selectEl = root.querySelector(`#daki-search-resource-select-${uid}`);
   const resourceDesc = root.querySelector("#daki-search-resource-desc");
   const searchBtn = root.querySelector("#daki-search-btn");
   const searchQuery = root.querySelector(`#daki-search-query-${uid}`);
 
   function updateResourceInfo() {
+    invalidateSearch();
     const selectedIdx = parseInt(selectEl.value, 10);
     const resource = pkg.resources[selectedIdx];
 
@@ -1299,11 +1356,15 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
   }
 
   selectEl.addEventListener("change", updateResourceInfo);
-  searchQuery.addEventListener("input", checkSearchButton);
+  searchQuery.addEventListener("input", () => {
+    invalidateSearch();
+    checkSearchButton();
+  });
   updateResourceInfo();
   checkSearchButton();
 
   async function runSearchAnalysis() {
+    const version = ++requestVersion;
     const selectedIdx = parseInt(selectEl.value, 10);
     const resource = pkg.resources[selectedIdx];
     const query = searchQuery.value.trim();
@@ -1329,7 +1390,7 @@ function setupSearchAnalysisEvents(pkg, cfg, root, uid) {
     `;
 
     const aiData = await sendSearchToAI(resource, pkg, query, root);
-    if (istVerworfen(root)) return;
+    if (istVerworfen(root) || version !== requestVersion || !resultDiv.isConnected) return;
 
     if (aiData?.error) {
       renderAiErrorCard(

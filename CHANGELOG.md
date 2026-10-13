@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.36.7 - 2026-10-08
+- FIX: F-121: Allgemeine Analyse, Vergleich und Suche verwerfen ältere Antworten sowie Ergebnisse zu geänderter Ressource/Suchanfrage.
+- FIX: F-121: Zweiter Datensatz hat eine eigene Abrufgeneration; geänderte URL oder erneutes Laden invalidiert alten Datensatz und Vergleich. Entfernte Ergebnisfelder erhalten keine späten Antworten.
+- FIX: F-120 (Rest): Zweiter Datensatz ohne Ressourcen zeigt einen Leerhinweis statt „Datensatz erfolgreich geladen“; Ressourcenauswahl und Vergleich bleiben gesperrt.
+
+## 1.36.6 - 2026-10-02
+- ENH: Verwendete ODAS-Dienste in `odas-services` deklariert.
+
+## 1.36.5 - 2026-09-29
+
+- **FIX:** Audit F-120: Vergleichsanalyse ohne gültige zweite Ressource startete trotzdem und blieb bei „Vergleichsanalyse läuft..." hängen (TypeError). Start-Button wird nur mit geladenem zweiten Datensatz mit Ressourcen freigegeben; Klick ohne Ressourcen zeigt eine sichtbare Aufforderung statt des Ladezustands (Browser nachgewiesen).
+
 ## 1.36.4 - 2026-09-10
 - **FIX (KI-B1):** Die App hatte keinerlei Lifecycle-Schutz. Jetzt gibt es `onPageLeave` mit Instanz-Registry, `disposed`-Guard und `AbortController`: Ein laufender `/ai`-POST (bis 90 s) wird beim Seitenwechsel abgebrochen, und späte Fortsetzungen schreiben nicht mehr in den dann fremden Container. Damit ist der letzte offene Fall der F-57/F-70-Klasse geschlossen.
 - **FIX (KI-B2):** Das Breiten-Layout lag als Inline-Style auf dem geteilten `#main-content` und blieb sitzungsweit hängen (app-base ersetzt nur `innerHTML`). Jetzt eine Klasse (`.daki-container`), die der Teardown entfernt; auf kleinen Bildschirmen greift die Breite nicht mehr.
