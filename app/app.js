@@ -635,6 +635,8 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
     const json = await fetchOdasJson(cfg.apiurl, cfg, { signal: signalFuer(root) });
+    // F-162: Nach „Zurück zur Funktionsauswahl“ oder Seitenwechsel nicht mehr in den entfernten Bereich schreiben.
+    if (istVerworfen(root) || !container.isConnected) return;
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -646,6 +648,7 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
       throw new Error("Unbekanntes API-Format");
     }
   } catch (err) {
+    if (istVerworfen(root) || !container.isConnected) return; // F-162
     renderOdasFehler(container, err, {
       url: cfg.apiurl,
       label: "Analyse-Datensatz-API",
@@ -892,6 +895,8 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
     const json = await fetchOdasJson(cfg.apiurl, cfg, { signal: signalFuer(root) });
+    // F-162: Nach „Zurück zur Funktionsauswahl“ oder Seitenwechsel nicht mehr in den entfernten Bereich schreiben.
+    if (istVerworfen(root) || !container.isConnected) return;
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -905,6 +910,7 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
       throw new Error("Unbekanntes API-Format");
     }
   } catch (err) {
+    if (istVerworfen(root) || !container.isConnected) return; // F-162
     renderOdasFehler(container, err, {
       url: cfg.apiurl,
       label: "Erster Analyse-Datensatz",
@@ -1219,6 +1225,8 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
   try {
     // Daten laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
     const json = await fetchOdasJson(cfg.apiurl, cfg, { signal: signalFuer(root) });
+    // F-162: Nach „Zurück zur Funktionsauswahl“ oder Seitenwechsel nicht mehr in den entfernten Bereich schreiben.
+    if (istVerworfen(root) || !container.isConnected) return;
     if (!json.success) throw new Error("API returned success=false");
 
     // Nur noch CKAN Support
@@ -1230,6 +1238,7 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
       throw new Error("Unbekanntes API-Format");
     }
   } catch (err) {
+    if (istVerworfen(root) || !container.isConnected) return; // F-162
     renderOdasFehler(container, err, {
       url: cfg.apiurl,
       label: "Analyse-Datensatz-API",

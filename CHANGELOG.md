@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.36.8 - 2026-10-13
+- FIX: F-162: „Zurück zur Funktionsauswahl“ während des Metadatenabrufs erzeugt keinen JavaScript-Fehler mehr; späte Antworten füllen den entfernten Bereich nicht.
+
 ## 1.36.7 - 2026-10-08
 - FIX: F-121: Allgemeine Analyse, Vergleich und Suche verwerfen ältere Antworten sowie Ergebnisse zu geänderter Ressource/Suchanfrage.
 - FIX: F-121: Zweiter Datensatz hat eine eigene Abrufgeneration; geänderte URL oder erneutes Laden invalidiert alten Datensatz und Vergleich. Entfernte Ergebnisfelder erhalten keine späten Antworten.

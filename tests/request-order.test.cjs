@@ -15,7 +15,7 @@ function setup(kind) {
     });
     return nodes.get(selector);
   } };
-  const app = vm.createContext({ console, root });
+  const app = vm.createContext({ console, root, AbortController });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../app/app.js'), 'utf8'), app);
   vm.runInContext('dakiInstanzen.set(root, { disposed: false });', app);
   const requests = [];
@@ -93,3 +93,16 @@ test('F-120 Vergleich: zweiter Datensatz ohne Ressourcen zeigt Leerzustand statt
   assert.equal(s.root.querySelector('#daki-resource2-select').disabled, true);
   assert.equal(s.button.disabled, true);
 });
+for (const [kind, loader] of [['general', 'loadGeneralAnalysisContent'], ['comparison', 'loadComparisonAnalysisContent'], ['search', 'loadSearchAnalysisContent']]) {
+  test(`F-162 ${kind}: Metadaten nach frühem Rückweg füllen keinen entfernten Bereich`, async () => {
+    const s = setup(kind); const meta = deferred();
+    vm.runInContext('dakiInstanzen.set(root, { disposed: false, controller: new AbortController() });', s.app);
+    s.app.fetchOdasJson = () => meta.promise;
+    const content = { innerHTML: 'LADEN', isConnected: true, querySelector() { return null; }, appendChild() {} };
+    const run = s.app[loader](content, { apiurl: 'https://fixture.invalid/api/3/action/package_show?id=a' }, s.root, 'test');
+    content.innerHTML = ''; content.isConnected = false; // „Zurück zur Funktionsauswahl“ leert den Container
+    meta.resolve({ success: true, result: { name: 'a', title: 'A', resources: [{ name: 'Alpha', url: 'https://fixture.invalid/a.csv' }] } });
+    await run;
+    assert.equal(content.innerHTML, '');
+  });
+}
