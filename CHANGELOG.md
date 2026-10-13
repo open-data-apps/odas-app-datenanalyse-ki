@@ -12,7 +12,6 @@
 - ENH: Verwendete ODAS-Dienste in `odas-services` deklariert.
 
 ## 1.36.5 - 2026-09-29
-
 - **FIX:** Audit F-120: Vergleichsanalyse ohne gültige zweite Ressource startete trotzdem und blieb bei „Vergleichsanalyse läuft..." hängen (TypeError). Start-Button wird nur mit geladenem zweiten Datensatz mit Ressourcen freigegeben; Klick ohne Ressourcen zeigt eine sichtbare Aufforderung statt des Ladezustands (Browser nachgewiesen).
 
 ## 1.36.4 - 2026-09-10
