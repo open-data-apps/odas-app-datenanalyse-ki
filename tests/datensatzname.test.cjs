@@ -94,10 +94,10 @@ test('Beschreibung: Konfigurationstext hat Vorrang, Standardtext/leer fällt auf
   assert.equal(f({ datenbeschreibung: '' }, null), '');
 });
 
-for (const [kind, fn, ds] of [
-  ['Allgemeine Analyse', 'loadGeneralAnalysisContent', 'dataset-info'],
-  ['Vergleich', 'loadComparisonAnalysisContent', 'dataset-info'],
-  ['Suche', 'loadSearchAnalysisContent', 'dataset-info'],
+for (const [kind, fn] of [
+  ['Allgemeine Analyse', 'loadGeneralAnalysisContent'],
+  ['Vergleich', 'loadComparisonAnalysisContent'],
+  ['Suche', 'loadSearchAnalysisContent'],
 ]) {
   test(`${kind}: Infoblock zeigt CKAN-notes escaped; ohne notes „Keine Beschreibung vorhanden.“`, async () => {
     const pkg = { name: 'ds', title: 'T', notes: 'Messdaten <b>&</b> mehr',
@@ -105,7 +105,7 @@ for (const [kind, fn, ds] of [
     const a = setup(pkg);
     const container = stubNode();
     await a.app[fn](container, { apiurl: API, datenbeschreibung: STANDARD }, a.root, 'uid');
-    assert.match(container.innerHTML, new RegExp(ds));
+    assert.match(container.innerHTML, /dataset-info/);
     assert.match(container.innerHTML, /Messdaten &lt;b&gt;&amp;&lt;\/b&gt; mehr/);
     assert.doesNotMatch(container.innerHTML, /Hier ist die Beschreibung/);
 
@@ -115,3 +115,38 @@ for (const [kind, fn, ds] of [
     assert.match(container2.innerHTML, /Keine Beschreibung vorhanden\./);
   });
 }
+
+test('Allgemeine Analyse: Überschrift zeigt URL-Kürzel als Rückfall und danach den CKAN-Titel mit Umlaut', async () => {
+  const pkg = { name: 'ds', title: 'Geschwindigkeitsüberschreitungen', resources: [] };
+  const a = setup(pkg);
+  const container = stubNode();
+  const heading = { textContent: 'Geschwindigkeitsuberschreitungen' };
+  const rootQuery = a.root.querySelector;
+  a.root.querySelector = (sel) => (sel === '#analysis-title .daki-dsname' ? heading : rootQuery(sel));
+  await a.app.loadGeneralAnalysisContent(container, { apiurl: API }, a.root, 'uid');
+  assert.equal(heading.textContent, 'Geschwindigkeitsüberschreitungen');
+
+  // Titel fehlt: Kürzel bleibt
+  const b = setup({ name: 'ds', resources: [] });
+  const heading2 = { textContent: 'Geschwindigkeitsuberschreitungen' };
+  b.root.querySelector = (sel) => (sel === '#analysis-title .daki-dsname' ? heading2 : null);
+  await b.app.loadGeneralAnalysisContent(stubNode(), { apiurl: API }, b.root, 'uid');
+  assert.equal(heading2.textContent, 'Geschwindigkeitsuberschreitungen');
+
+  // Titel als Text, nicht als HTML
+  const c = setup({ name: 'ds', title: '<img src=x>', resources: [] });
+  const heading3 = { textContent: 'x' };
+  c.root.querySelector = (sel) => (sel === '#analysis-title .daki-dsname' ? heading3 : null);
+  await c.app.loadGeneralAnalysisContent(stubNode(), { apiurl: API }, c.root, 'uid');
+  assert.equal(heading3.textContent, '<img src=x>');
+});
+
+test('Allgemeine Analyse: gerenderte Überschrift enthält das Namens-Span', async () => {
+  const a = setup({});
+  const children = [];
+  const container = Object.assign(stubNode(), { appendChild(c) { children.push(c); }, querySelector: () => stubNode() });
+  a.app.addBackButtonIfNeeded = () => {};
+  a.app.loadGeneralAnalysisContent = async () => {};
+  await a.app.showGeneralAnalysis(container, { apiurl: API }, a.root, 'uid');
+  assert.match(children[0].innerHTML, /id="analysis-title"[\s\S]*Analyse des Datensatzes: <span class="daki-dsname">Geschwindigkeitsuberschreitungen<\/span>/);
+});

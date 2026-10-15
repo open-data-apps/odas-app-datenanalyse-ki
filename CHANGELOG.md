@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.36.11 - 2026-10-15
-- FIX: Das Funktionsmenü zeigt den Datensatznamen jetzt mit dem Titel des Datenportals (z. B. „Geschwindigkeitsüberschreitungen“ mit Umlaut) statt des aus der URL abgeleiteten Kürzels; das Kürzel bleibt Rückfall, solange der Titel nicht geladen ist.
+- FIX: Das Funktionsmenü zeigt den Datensatznamen jetzt mit dem Titel des Datenportals (z. B. „Geschwindigkeitsüberschreitungen“ mit Umlaut) statt des aus der URL abgeleiteten Kürzels, ebenso die Überschrift der Allgemeinen Analyse; das Kürzel bleibt Rückfall, solange der Titel nicht geladen ist.
 - FIX: Der Standardtext der „Daten-Beschreibung“ ist jetzt leer. Ist keine eigene Beschreibung gepflegt (oder noch der frühere Platzhalter „Hier ist die Beschreibung für die Daten.“ gespeichert), zeigt die App die Beschreibung des Datensatzes aus dem Datenportal an.
 
 ## 1.36.10 - 2026-10-15

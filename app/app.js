@@ -629,7 +629,7 @@ async function showGeneralAnalysis(container, cfg, root, uid) {
           <i class="fas fa-chart-bar me-2" style="color: #007bff;"></i>
           ${
             datasetName
-              ? `Analyse des Datensatzes: ${escapeHtml(datasetName)}`
+              ? `Analyse des Datensatzes: <span class="daki-dsname">${escapeHtml(datasetName)}</span>`
               : "Allgemeine Datensatzanalyse"
           }
         </h5>
@@ -685,6 +685,10 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
     });
     return;
   }
+
+  // Überschrift: CKAN-Titel ersetzt das URL-Kürzel (Umlaute); Kürzel bleibt Rückfall.
+  const titelSpan = root.querySelector("#analysis-title .daki-dsname");
+  if (titelSpan && pkg.title) titelSpan.textContent = pkg.title;
 
   // Oberer Infoblock mit Titel und Beschreibung des Datensatzes
   const baseUrl = cfg.apiurl
