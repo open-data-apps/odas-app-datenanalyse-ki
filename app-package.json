@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ki-analyse",
   "name": "KI-Analyse",
-  "app-version": "1.36.10",
+  "app-version": "1.36.11",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -100,12 +100,12 @@
       "label": "Daten-Beschreibung",
       "category": "beschreibung",
       "hilfe": "Die Beschreibung wird passend zu den Daten angezeigt",
-      "default": "Hier ist die Beschreibung für die Daten.",
+      "default": "",
       "format": {
         "typ": "string",
         "laenge": 100
       },
-      "erforderlich": "ja"
+      "erforderlich": "nein"
     },
     "icon": {
       "label": "App-Icon",

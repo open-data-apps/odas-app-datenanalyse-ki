@@ -453,6 +453,13 @@ async function app(configdata, enclosingHtmlDivElement) {
   showFunctionSelectionMenu(enclosingHtmlDivElement, cfg, dakiUid);
 }
 
+// Datenbeschreibung: Konfigurationstext, sonst CKAN-notes des Datensatzes
+function datenbeschreibungFuer(cfg, pkg) {
+  const text = cfg.datenbeschreibung;
+  const istStandard = !text || text === "Hier ist die Beschreibung für die Daten.";
+  return istStandard ? (pkg && pkg.notes) || "" : text;
+}
+
 // Datensatzname aus Konfiguration extrahieren
 function extractDatasetNameFromConfig(cfg) {
   try {
@@ -496,28 +503,39 @@ function showFunctionSelectionMenu(container, cfg, dakiUid) {
   menuCard.innerHTML = `
     <div class="card-body">
       <h5 class="card-title">
-        KI-Analysefunktionen für ${escapeHtml(datasetName)}
+        KI-Analysefunktionen für <span class="daki-dsname">${escapeHtml(datasetName)}</span>
       </h5>
-      <p class="card-text text-muted">Wählen Sie die gewünschte Analysefunktion für ${escapeHtml(datasetName)}:</p>
+      <p class="card-text text-muted">Wählen Sie die gewünschte Analysefunktion für <span class="daki-dsname">${escapeHtml(datasetName)}</span>:</p>
       <div class="d-grid gap-3 function-buttons">
         <button id="daki-general-analysis-btn" class="btn btn-primary">
           <i class="fas fa-chart-bar feature-icon"></i>
           <strong>Allgemeine Datensatzanalyse</strong>
-          <br><small class="text-white-50">Umfassende KI-Analyse des Datensatzes: ${escapeHtml(datasetName)}</small>
+          <br><small class="text-white-50">Umfassende KI-Analyse des Datensatzes: <span class="daki-dsname">${escapeHtml(datasetName)}</span></small>
         </button>
         <button id="daki-comparison-analysis-btn" class="btn btn-success">
           <i class="fas fa-balance-scale feature-icon"></i>
           <strong>Datensatzvergleichsanalyse</strong>
-          <br><small class="text-white-50">Vergleiche ${escapeHtml(datasetName)} auf Gemeinsamkeiten und Unterschiede mit einem zweiten Datensatz</small>
+          <br><small class="text-white-50">Vergleiche <span class="daki-dsname">${escapeHtml(datasetName)}</span> auf Gemeinsamkeiten und Unterschiede mit einem zweiten Datensatz</small>
         </button>
         <button id="daki-search-analysis-btn" class="btn btn-info">
           <i class="fas fa-search feature-icon"></i>
           <strong>Datensatzsuche</strong>
-          <br><small class="text-white-50">Gezielte Suche nach spezifischen Informationen im Datensatz: ${escapeHtml(datasetName)}</small>
+          <br><small class="text-white-50">Gezielte Suche nach spezifischen Informationen im Datensatz: <span class="daki-dsname">${escapeHtml(datasetName)}</span></small>
         </button>
       </div>
     </div>`;
   container.appendChild(menuCard);
+
+  // Der CKAN-Titel ersetzt das aus der URL abgeleitete Kürzel (das z. B. Umlaute
+  // verliert); schlägt der Abruf fehl, bleibt das Kürzel stehen.
+  fetchOdasJson(cfg.apiurl, cfg)
+    .then((j) => {
+      if (!j || !j.result || !j.result.title) return;
+      menuCard.querySelectorAll(".daki-dsname").forEach((span) => {
+        span.textContent = j.result.title;
+      });
+    })
+    .catch(() => {});
 
   // Content Container für die gewählte Funktion
   const contentContainer = document.createElement("div");
@@ -687,7 +705,7 @@ async function loadGeneralAnalysisContent(container, cfg, root, uid) {
         Datensatz: ${datasetLink}
       </h6>
       <p class="text-muted">${escapeHtml(
-        cfg.datenbeschreibung || "Keine Beschreibung vorhanden.",
+        datenbeschreibungFuer(cfg, pkg) || "Keine Beschreibung vorhanden.",
       )}</p>
     </div>
     <div id="daki-datenstand-wrap"></div>
@@ -962,7 +980,7 @@ async function loadComparisonAnalysisContent(container, cfg, root, uid) {
                 ${datasetLink}
               </h6>
               <p class="card-text text-muted">${escapeHtml(
-                cfg.datenbeschreibung || "Keine Beschreibung vorhanden.",
+                datenbeschreibungFuer(cfg, dataset1) || "Keine Beschreibung vorhanden.",
               )}</p>
             </div>
           </div>
@@ -1277,7 +1295,7 @@ async function loadSearchAnalysisContent(container, cfg, root, uid) {
         Datensatz: ${datasetLink}
       </h6>
       <p class="text-muted">${escapeHtml(
-        cfg.datenbeschreibung || "Keine Beschreibung vorhanden.",
+        datenbeschreibungFuer(cfg, pkg) || "Keine Beschreibung vorhanden.",
       )}</p>
     </div>
   `;
