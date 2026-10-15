@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.36.12 - 2026-10-15
+- FIX: Kopfzeile bei 360 px ohne Überlauf (Template): Logo- und Burger-Spalte passen sich der Breite an, das Menü-Symbol ragt nicht mehr über den rechten Rand. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.36.11 - 2026-10-15
 - FIX: Das Funktionsmenü zeigt den Datensatznamen jetzt mit dem Titel des Datenportals (z. B. „Geschwindigkeitsüberschreitungen“ mit Umlaut) statt des aus der URL abgeleiteten Kürzels, ebenso die Überschrift der Allgemeinen Analyse; das Kürzel bleibt Rückfall, solange der Titel nicht geladen ist.
 - FIX: Der Standardtext der „Daten-Beschreibung“ ist jetzt leer. Ist keine eigene Beschreibung gepflegt (oder noch der frühere Platzhalter „Hier ist die Beschreibung für die Daten.“ gespeichert), zeigt die App die Beschreibung des Datensatzes aus dem Datenportal an.
